@@ -1,7 +1,9 @@
+# Import library and os
 import cv2
 import os
 import matplotlib.pyplot as plt
 
+# Function to extract images from dataset to array of matrix
 def FolderImageToListOfMatrix(folder):
     # Initiate List of Matrix Faces
     listOfMatrixFace = []
@@ -35,5 +37,5 @@ def reshapeImage(face):
 listOfMatrixFace = FolderImageToListOfMatrix("dataset")
 
 # Show First Image
-plt.imshow(reshapeImage(listOfMatrixFace[0]) , cmap="gray")
-plt.show()
+# plt.imshow(reshapeImage(listOfMatrixFace[0]) , cmap="gray")
+# plt.show()

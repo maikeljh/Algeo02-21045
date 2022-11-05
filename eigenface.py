@@ -1,6 +1,8 @@
 # Import library
 import sys
 import matplotlib.pyplot as plt
+import numpy as np
+
 sys.path.insert(0, './extract')
 from extract import imageToMatrix
 
@@ -31,5 +33,23 @@ def MakeMeanFace(listOfMatrixFace):
 meanFace = MakeMeanFace(listOfMatrixFace)
 
 # Showing image of mean face
-plt.imshow(imageToMatrix.reshapeImage(meanFace) , cmap="gray")
-plt.show()
+#plt.imshow(imageToMatrix.reshapeImage(meanFace) , cmap="gray")
+#plt.show()
+
+# Finding the difference for each face matrix
+difference = []
+for i in range(len(listOfMatrixFace)):
+    eachDiff = [0 for k in range(256*256)]
+    for j in range(256*256):
+        eachDiff[j] = listOfMatrixFace[i][j] - meanFace[j]
+    difference.append(eachDiff)
+
+# Finding the covariance matrix by multiplying A Transpose with A
+covariance = np.matmul(difference,np.transpose(difference)) # In this case, difference is in form of A Transpose
+
+# Plotting the covarience matrix
+#plt.imshow(covariance, cmap="gray")
+#plt.show()
+
+
+

@@ -3,92 +3,91 @@ from tkinter import filedialog
 from PIL import ImageTk
 from PIL import Image
 
-root = Tk()
-root.title("GUI")
-root.geometry("1280x720")
-root.resizable(0, 0)
-
-global dir
-dir = " "
+FontType = "Calibri Light"
+global Folderdir
+global Imagedir
+Folderdir = ""
+Imagedir = ""
 
 def setClick():
     folder_path = filedialog.askdirectory()
-    setLabel.config(text=folder_path)
-    global dir
-    dir = folder_path
-    print(dir)
+    global testImg
+    global resultImg
+    global Folderdir
+    global Imagedir
+    global bgcanvas
+    if folder_path != "":
+        bgcanvas.itemconfig(set_label, text=folder_path)
+        Folderdir = folder_path
+    if Imagedir == "":
+        pass
+    else:
+        execute()
     return
 
 def fileClick():
-    folder_path = filedialog.askopenfilename()
-    FileLabel.config(text=folder_path)
+    image_path = filedialog.askopenfilename()
     global testImg
     global resultImg
-    testImg = ImageTk.PhotoImage(Image.open(folder_path).resize((350,350)))
-    testImgDis = Label(image=testImg)
-
-    if dir == " ":
-        resultImg = ImageTk.PhotoImage(Image.open("noimage.jpg").resize((350,350)))
-        resultImgDis = Label(image=resultImg)
-        resultImgDis.grid(row=3, column=4, rowspan=10, sticky=W, pady=(0, 0))
+    global Folderdir
+    global Imagedir
+    global bgcanvas
+    if image_path != "":
+        testImg = ImageTk.PhotoImage(Image.open(image_path).resize((350,350)))
+        bgcanvas.itemconfig(test_image, image=testImg)
+        bgcanvas.itemconfig(file_label, text=image_path)
+        Imagedir = image_path
+    if Folderdir == "":
+        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((350,350)))
+        bgcanvas.itemconfig(result_image, image=noImg)
     else:
         execute()
-    
-    testImgDis.grid(row=3, column=1, rowspan=10, sticky=W, pady=(0, 0))
     return
 
 def execute():
     return
 
-#label test
-titleLabel = Label(root, text="Face Recognition", font=("Calibri Light", 36))
-titleUnderScore =Canvas(root, height=15, width=1280)
-titleUnderScore.create_line(50,0,1230,0, width=15)
 
+root = Tk()
+root.title("GUI")
+root.iconbitmap("gui/icon.ico")
+root.geometry("1280x720")
+root.resizable(0, 0)
 
-setTitle = Label(root, text="Insert Your Dataset", font=("Calibri Light", 18))
-SetBut = Button(root, text="Choose File", command=setClick)
-setLabel = Label(root, text="No File Chosen", font=("Calibri Light", 10), width=30, anchor='w')
-FileTitle = Label(root, text="Insert Your Image", font=("Calibri Light", 18))
-FileBut = Button(root, text="Choose File", command=fileClick)
-FileLabel = Label(root, text="No File Chosen", font=("Calibri Light", 10), width=30, anchor='w')
-resultLabel = Label(root, text="Result", font=("Calibri Light", 18))
-outputLabel = Label(root, text="None", fg="#77D977", font=("Calibri Light", 18))
+bgImage = ImageTk.PhotoImage(Image.open("gui/bg.png"))
+buttonImage = PhotoImage(file='gui/buttons.png',width=80,height=30)
+noImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((350,350)))
+testImg = noImg
+resultImg = noImg
 
-testImgLabel = Label(root, text="Test Image", font=("Calibri Light", 10))
-testImg = ImageTk.PhotoImage(Image.open("noimage.jpg").resize((350,350)))
-testImgDis = Label(image=testImg)
-resultImgLabel = Label(root, text="Closest Result", font=("Calibri Light", 10))
-resultImg = ImageTk.PhotoImage(Image.open("noimage.jpg").resize((350,350)))
-resultImgDis = Label(image=testImg)
+bgcanvas = Canvas(root, width=1280, height=720)
+bgcanvas.create_image(0,0,image=bgImage,anchor="nw")
+bgcanvas.place(x=0,y=0)
 
+#Header
+title_text = bgcanvas.create_text(640, 10, anchor = N, text="Face Recognition", font=(FontType, 36))
+title_line = bgcanvas.create_line(50,80,1230,80, width=2)
+#Left Inset
+set_text = bgcanvas.create_text(100, 170, anchor = W, text="Insert Your Dataset", font=(FontType, 18))
+SetBut = Button(root, image=buttonImage, borderwidth=0, command=setClick)
+set_button = bgcanvas.create_window(100, 220, anchor = W, window=SetBut)
+set_label = bgcanvas.create_text(200, 210, anchor = NW, text="No File Chosen", font=(FontType, 12),width=170)
 
-timerTitle = Label(root, text="Execution Time: ", font=("Calibri Light", 14))
-timerLabel = Label(root, text="00.00", fg="#77D977", font=("Calibri Light", 14))
+file_text = bgcanvas.create_text(100, 300, anchor = W, text="Insert Your Image", font=(FontType, 18))
+FileBut = Button(root, image=buttonImage, borderwidth=0, command=fileClick)
+file_button = bgcanvas.create_window(100, 350, anchor = W, window=FileBut)
+file_label = bgcanvas.create_text(200, 340, anchor = NW, text="No File Chosen", font=(FontType, 12),width=170)
 
-
-
-titleLabel.grid(row=0, column=0, columnspan=7, sticky=N)
-titleUnderScore.grid(row=1, column=0, columnspan=7, sticky=N)
-
-setTitle.grid(row=2, column=0, sticky=NW, padx=(100, 0), pady=(50, 0))
-SetBut.grid(row=3, column=0, sticky=W, padx=(100, 0), pady=(10, 0))
-setLabel.grid(row=3, column=0, sticky=W, padx=(200, 0), pady=(10, 0))
-
-FileTitle.grid(row=4, column=0, sticky=W, padx=(100, 0), pady=(20, 0))
-FileBut.grid(row=5, column=0, sticky=W, padx=(100, 0), pady=(10, 0))
-FileLabel.grid(row=5, column=0, sticky=W, padx=(200, 0), pady=(10, 0))
-
-resultLabel.grid(row=6, column=0, sticky=W, padx=(100, 0), pady=(50, 0))
-outputLabel.grid(row=7, column=0, sticky=W, padx=(120, 0), pady=(0, 0))
-
-testImgLabel.grid(row=2, column=1, columnspan=3, sticky=W, pady=(50, 0))
-testImgDis.grid(row=3, column=1, rowspan=10, sticky=W, pady=(0, 0))
-resultImgLabel.grid(row=2, column=4, columnspan=3, sticky=W, pady=(50, 0))
-resultImgDis.grid(row=3, column=4, rowspan=10, sticky=W, pady=(0, 0))
-
-timerTitle.grid(row=13, column=1, columnspan=3, sticky=W, pady=(50, 0))
-timerLabel.grid(row=13, column=1, columnspan=3, sticky=W, pady=(52, 0), padx=(130,0))
+result_label = bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
+output_label = bgcanvas.create_text(130, 475, anchor = NW, text="None", font=(FontType, 18), fill="#01D901")
+#Main viewfinder
+test_image_label = bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
+test_image = bgcanvas.create_image(400,350, anchor=W, image=testImg)
+result_image_label = bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
+result_image = bgcanvas.create_image(800,350, anchor=W, image=testImg)
+#timer
+timer_title = bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
+timer_label = bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
 
 root.mainloop()
 

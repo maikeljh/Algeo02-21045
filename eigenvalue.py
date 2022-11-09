@@ -28,7 +28,7 @@ def get_k_eigenvalue(array):
 
 
 def get_k_eigenvalue_with_accum_q(array):
-    array = np.abs(array)
+    # array = np.abs(array)
     n = len(array)
     array_sum = np.sum(array)
     indexed_array = []
@@ -37,18 +37,13 @@ def get_k_eigenvalue_with_accum_q(array):
 
     indexed_array = np.array(indexed_array)
     sorted_array = indexed_array[indexed_array[:,1].argsort(kind='mergesort')[::-1]]
-    i = 0
     print(sorted_array)
-    print(sorted_array[0][1])
+    i = 0
     accumulative_sum = 0
     accumulative_array = []
     while (accumulative_sum/array_sum <= THRESHOLD):
         accumulative_sum += sorted_array[i][1]
-        # print("HALO")
-        # print([int(sorted_array[i][0])])
         accumulative_array = np.append(accumulative_array, [sorted_array[i][0]])
-        print(accumulative_array)
-        print(i)
         i += 1
     k = i
     return i, accumulative_array

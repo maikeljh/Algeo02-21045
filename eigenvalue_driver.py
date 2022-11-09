@@ -1,6 +1,7 @@
 import numpy as np
 from eigenvalue import get_real_eigenvalue, compute_eigenvalue_with_accum_q
 from hessenberg import hessenberg_form
+from eigenvector import get_k_eigenvector
 from qr import *
 
 def main():
@@ -13,6 +14,7 @@ def main():
 
     result, q = compute_eigenvalue_with_accum_q(matrix)
 
+    k_array = get
     np.set_printoptions(precision=3)
     print(result)
     print(q)

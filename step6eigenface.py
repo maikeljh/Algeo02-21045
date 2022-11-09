@@ -6,7 +6,7 @@ from eigenvector import get_k_eigenvector
 def EigenFaces(eigen_vectors, k):
     
     listOfEigenFace = []
-    for i in range(k):
+    for i in range(int(k)):
         eigenFace = np.matmul(eigen_vectors[i], difference)
         listOfEigenFace.append(eigenFace)
     

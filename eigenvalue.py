@@ -4,7 +4,7 @@ import numpy as np
 
 SENSITIVITY = 1
 THRESHOLD = 0.95
-ITERATION = 40
+ITERATION = 10
 
 def compute_eigenvalue(matrix):
     hessenberg_matrix = hessenberg_form(matrix)

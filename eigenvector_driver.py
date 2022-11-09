@@ -14,7 +14,7 @@ from extract import imageToMatrix as ITM
 
 def main():
     np.set_printoptions(precision=3)
-    matrix = np.loadtxt('driver_data\hasil.txt', usecols=range(10))
+    matrix = np.loadtxt('outfile.txt', usecols=range(100))
 
     # print(matrix)
 
@@ -38,12 +38,13 @@ def main():
     print(f"Didapat {k} eigenvector adalah")
     print(arr)
 
-    array_of_eigenfaces = EigenFaces(arr)
-    plt.imshow(ITM.reshapeImage(array_of_eigenfaces[0]) , cmap="gray")
-    plt.show()
+    array_of_eigenfaces = EigenFaces(arr,int(k))
     time2 = time.time()
-
     print(time2 - time1)
+    
+    for i in range(20):
+        plt.imshow(ITM.reshapeImage(array_of_eigenfaces[i]) , cmap="gray")
+        plt.show()
 
 
     

@@ -12,7 +12,7 @@ def hessenberg_form(matrix):
             # print(transposed_givens)
             matrix =  np.matmul(givens, matrix)
             matrix =  np.matmul(matrix, transposed_givens)
-            if matrix[n, m-1] < 1.0e-13:
+            if matrix[n, m-1] < 1.0e-7:
                 matrix[n, m-1] = 0
             # print(m)
             # print(n)

@@ -20,7 +20,7 @@ def FolderImageToListOfMatrix(folder):
     # Return List Of Matrix faces
     return listOfMatrixFace
 
-# Reshape Image from 256^2 x 1 to 256x256 to display
+# Reshape Image from 1 x 256^2 to 256x256 to display
 def reshapeImage(face):
     x = 0
     shape = []

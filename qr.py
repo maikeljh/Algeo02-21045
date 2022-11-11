@@ -13,8 +13,8 @@ def qr_decomposition(matrix):
             q_transposed =  np.matmul(givens, q_transposed)
 
             matrix =  np.matmul(givens, matrix)
-            if matrix[n, m] < 1.0e-13:
-                matrix[n, m] = 0
+            # if matrix[n, m] < 1.0e-7:
+            #     matrix[n, m] = 0
             # print(m)
             # print(n)
             # print(matrix)
@@ -22,8 +22,16 @@ def qr_decomposition(matrix):
     q = np.transpose(q_transposed)
     return (q, matrix)
 
-def qr_iteration(a, n):
+def qr_iteration(matrix, n):
     for i in range(1, n+1):
-        q, r = qr_decomposition(a)
-        a = np.matmul(r, q)
-    return a
+        q, r = qr_decomposition(matrix)
+        matrix = np.matmul(r, q)
+    return matrix
+
+def qr_iteration_with_accum_q(matrix, n):
+    accum_q = np.identity(len(matrix))
+    for i in range(1, n+1):
+        q, r = qr_decomposition(matrix)
+        matrix = np.matmul(r, q)
+        accum_q = np.matmul(accum_q, q)
+    return matrix, accum_q

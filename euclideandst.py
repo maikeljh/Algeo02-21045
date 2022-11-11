@@ -4,7 +4,7 @@ def euclideandst(vektor1, vektor2):
 #vektor 1 sama 2 ukurannya sama kan ya
     sum = 0
     for i in range(len(vektor1)):
-        sum += pow(vektor1[i] - vektor2[i], 2)
+        sum += (vektor1[i]-vektor2[i])+(vektor1[i]-vektor2[i])
     sum = np.sqrt(sum)
     return sum
 

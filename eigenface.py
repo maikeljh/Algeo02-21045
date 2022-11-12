@@ -47,7 +47,6 @@ for i in range(len(listOfMatrixFace)):
 # Finding the covariance matrix by multiplying A Transpose with A
 covariance = np.matmul(difference,np.transpose(difference)) # In this case, difference is in form of A Transpose
 
-#covariance = np.matrix(covariance)
 #with open('outfile.txt','wb') as f:
     #for line in covariance:
         #np.savetxt(f, line, fmt='%.2f')

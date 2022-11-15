@@ -1,13 +1,14 @@
-import sys
-sys.path.append('C:\Python310\Lib\site-packages\cv2')
-
 from tkinter import *
 from tkinter import filedialog
-from PIL import ImageTk
-from PIL import Image
+from PIL import ImageTk, Image
 from os import _exit
-from time import sleep
+from time import time, sleep
+import threading
+import numpy as np
 import cv2
+import datetime
+
+import main_algo as algo
 
 #globar var
 FontType = "Calibri Light"
@@ -15,6 +16,8 @@ Folderdir = ""
 Imagedir = ""
 Fullscreen = False
 viewFinderRes = 350
+cameraStandbytime = 15
+cameraCapturetime = 10
 
 #keperluan backend
 def setClick():
@@ -30,9 +33,13 @@ def setClick():
         if Imagedir == "":
             pass
         else:
-            execute()
+            execute(0)
     else:
-        bgcanvas.itemconfig(set_label, text="No Folder Chosen")
+        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        bgcanvas.itemconfig(result_image, image=resultImg)
+        bgcanvas.itemconfig(set_label, text="No Folder Chosen") 
+        bgcanvas.itemconfig(output_label, text="None")
+        bgcanvas.itemconfig(timer_label, text="00.00")
         Folderdir = folder_path
     return
 
@@ -50,19 +57,53 @@ def fileClick():
         Imagedir = image_path
         if Folderdir == "":
             resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+            bgcanvas.itemconfig(output_label, text="None")
             bgcanvas.itemconfig(result_image, image=resultImg)
+            bgcanvas.itemconfig(timer_label, text="00.00")
         else:
-            execute()
+            execute(0)
     else:
         testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(file_label, text="No File Chosen")
+        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        
+        bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(test_image, image=testImg)
+        bgcanvas.itemconfig(output_label, text="None")
+        bgcanvas.itemconfig(timer_label, text="00.00")
         Imagedir = image_path
     return
 
-def execute():
-    #main program bakal di sini
-    return
+def execute(feed):
+    global resultImg
+    global Folderdir
+    global Imagedir
+    global resultFace
+
+    global videofeed
+    if not videofeed:
+        resultArray, time_elapsed, filename = algo.main_algo(Folderdir, Imagedir)
+        resultArray = np.asarray(resultArray)
+        resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
+        resultImg = ImageTk.PhotoImage(image=resultFace)
+
+        timerResult = str(datetime.timedelta(milliseconds=time_elapsed*1000))
+
+        bgcanvas.itemconfig(result_image, image=resultImg)
+        bgcanvas.itemconfig(timer_label, text=timerResult)
+        bgcanvas.itemconfig(output_label, text=filename)
+    else:
+        resultArray, time_elapsed, filename = algo.camera_algo(Folderdir, feed)
+        resultArray = np.asarray(resultArray)
+        resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
+        resultImg = ImageTk.PhotoImage(image=resultFace)
+
+        timerResult = str(datetime.timedelta(milliseconds=time_elapsed*1000))
+
+        bgcanvas.itemconfig(result_image, image=resultImg)
+        bgcanvas.itemconfig(timer_label, text=timerResult)
+        bgcanvas.itemconfig(output_label, text=filename)
+        pass
 
 
 #setup
@@ -142,7 +183,8 @@ def fullify():
     if Fullscreen == False:
         Fullscreen = True
         formervid = videostart
-        stopVideo()
+        if formervid:
+            stopVideo()
 
         widthval = windowrt.winfo_screenwidth()
         heightval = windowrt.winfo_screenheight()
@@ -162,6 +204,7 @@ def fullify():
         global resultImg
         global testImg
         global resultImg
+        global resultFace
         
         
         global bgImage
@@ -196,6 +239,7 @@ def fullify():
         bgcanvas.coords(result_image_label, 100+newdst3+newdst4, 110+newdst2)#bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
         bgcanvas.coords(result_image, 100+newdst3+newdst4, 120+newdst2)#bgcanvas.create_image(800,160, anchor=NW, image=testImg)
         
+        bgcanvas.coords(capture_image_label, 100+newdst3, 130+newdst2+viewFinderRes)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
         #timer
         bgcanvas.coords(timer_title, 100+newdst3, 190+newdst2+viewFinderRes)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
         bgcanvas.coords(timer_label, 230+newdst3, 191+newdst2+viewFinderRes)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
@@ -241,26 +285,21 @@ def fullify():
             mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png").resize((widthval*428//1280, heightval*1218//720)))
             bgcanvas.coords(mascot_img, widthval-(29*(widthval*10//1280)), 100)
             bgcanvas.itemconfig(mascot_img, image=mascotImage)
-            
 
-        if formervid:
-            pass
-        elif Imagedir != "":
-            testImg = ImageTk.PhotoImage(Image.open(Imagedir).resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(test_image, image=testImg)
+        if Imagedir != "" and Folderdir != "":
+            resultFace = resultFace.resize((viewFinderRes,viewFinderRes))
+            resultImg = ImageTk.PhotoImage(image=resultFace)
+            bgcanvas.itemconfig(result_image, image=resultImg)
         else:
+            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+            bgcanvas.itemconfig(result_image, image=resultImg)
+
+        if Imagedir == "":
             testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
             bgcanvas.itemconfig(test_image, image=testImg)
-        
-
-        if Folderdir == "":
-            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(result_image, image=resultImg)
         else:
-            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(result_image, image=resultImg)
-            #nanti hapus yang atas
-            execute()
+            testImg = ImageTk.PhotoImage(Image.open(Imagedir).resize((viewFinderRes,viewFinderRes)))
+            bgcanvas.itemconfig(test_image, image=testImg)
 
         if formervid:
             startVideo()
@@ -270,7 +309,8 @@ def winify():
     if Fullscreen == True:
         Fullscreen = False
         formervid = videostart
-        stopVideo()
+        if formervid:
+            stopVideo()
 
         widthval = 1280
         heightval = 720
@@ -290,6 +330,7 @@ def winify():
         global resultImg
         global testImg
         global resultImg
+        global resultFace
         
         
 
@@ -318,7 +359,8 @@ def winify():
         bgcanvas.coords(test_image, 400, 160)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
         bgcanvas.coords(result_image_label, 800, 150)#bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
         bgcanvas.coords(result_image, 800, 160)#bgcanvas.create_image(800,160, anchor=NW, image=testImg)
-        
+
+        bgcanvas.coords(capture_image_label, 400, 520)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
         #timer
         bgcanvas.coords(timer_title, 400, 580)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
         bgcanvas.coords(timer_label, 531, 581)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
@@ -355,25 +397,21 @@ def winify():
             mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png"))
             bgcanvas.coords(mascot_img, widthval-300, 100)
             bgcanvas.itemconfig(mascot_img, image=mascotImage)
-            
 
-        if formervid:
-            pass
-        elif Imagedir != "":
-            testImg = ImageTk.PhotoImage(Image.open(Imagedir).resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(test_image, image=testImg)
+        if Imagedir != "" and Folderdir != "":
+            resultFace = resultFace.resize((viewFinderRes,viewFinderRes))
+            resultImg = ImageTk.PhotoImage(image=resultFace)
+            bgcanvas.itemconfig(result_image, image=resultImg)
         else:
+            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+            bgcanvas.itemconfig(result_image, image=resultImg)
+
+        if Imagedir == "":
             testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
             bgcanvas.itemconfig(test_image, image=testImg)
-
-        if Folderdir == "":
-            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(result_image, image=resultImg)
         else:
-            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-            bgcanvas.itemconfig(result_image, image=resultImg)
-            #nanti hapus yang atas
-            execute()
+            testImg = ImageTk.PhotoImage(Image.open(Imagedir).resize((viewFinderRes,viewFinderRes)))
+            bgcanvas.itemconfig(test_image, image=testImg)
 
         if formervid:
             startVideo()
@@ -428,15 +466,17 @@ file_button = bgcanvas.create_image(100, 350, anchor=W, image=buttonImage)
 file_label = bgcanvas.create_text(200, 340, anchor = NW, text="No File Chosen", font=(FontType, 12),width=170)
 
 result_label = bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
-output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01D901")
+output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01DA01")
 #Main viewfinder
 test_image_label = bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
 test_image = bgcanvas.create_image(400,160, anchor=NW, image=testImg)
 result_image_label = bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
 result_image = bgcanvas.create_image(800,160, anchor=NW, image=testImg)
+
+capture_image_label = bgcanvas.create_text(400, 520, anchor = W, text="", font=(FontType, 14))
 #timer
 timer_title = bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
-timer_label = bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
+timer_label = bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01FA01")
 
 #logo credits
 logo_credits = bgcanvas.create_image(1200,640,anchor=NW,image=logoImg)
@@ -632,14 +672,20 @@ bgcanvas.tag_bind(logo_credits, '<ButtonPress-1>', rollcred)
 #Bonus Video feed
 videofeed = "none"
 videostart = False
-def startVideo():
+
+
+def startVideo():    
     try:
         global Imagedir
+        global Folderdir
         global videostart
         global videofeed
         global testImg
         videostart = True
         Imagedir = ""
+
+        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        bgcanvas.itemconfig(result_image, image=resultImg)
         
         videoCap = cv2.VideoCapture(0)
         approxstartW = videoCap.get(cv2.CAP_PROP_FRAME_WIDTH) // 2 - viewFinderRes // 2
@@ -659,31 +705,79 @@ def startVideo():
         bgcanvas.itemconfig(file_button, image=buttonImageOff)
         bgcanvas.itemconfig(camera_button, image=cameraClose)
 
+        cachedTime = time()
+        captured = False
         while videostart:
+            cachedTime2 = time()
             _,frame = videoCap.read()
             frame = cv2.flip(frame,1)
             cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
             testImg = Image.fromarray(cv2image).crop([approxstartW,approxstartH,approxstartW+plusval,approxstartH+plusval]).resize([viewFinderRes,viewFinderRes])
+
             videofeed = ImageTk.PhotoImage(image=testImg)
             bgcanvas.itemconfig(test_image, image=videofeed)
             windowrt.update()
+
+            if Folderdir != "":
+                if (cachedTime2 - cachedTime > cameraCapturetime + cameraStandbytime):
+                    cachedTime = cachedTime2
+                    captured = False
+                elif (cachedTime2 - cachedTime > cameraCapturetime):
+                    if not captured:
+                        captured = True
+                        bgcanvas.itemconfig(capture_image_label, text="Captured")
+                        feedArray = np.asarray(testImg)
+                        feed = algo.cb.videoToMatrix(feedArray)
+                        execute(feed)
+                        
+                elif(cachedTime2 - cachedTime > 9 and cachedTime2 - cachedTime < 10):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 1")
+                elif(cachedTime2 - cachedTime > 8 and cachedTime2 - cachedTime < 9):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 2")
+                elif(cachedTime2 - cachedTime > 7 and cachedTime2 - cachedTime < 8):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 3")
+                elif(cachedTime2 - cachedTime > 6 and cachedTime2 - cachedTime < 7):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 4")
+                elif(cachedTime2 - cachedTime > 5 and cachedTime2 - cachedTime < 6):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 5")
+                elif(cachedTime2 - cachedTime > 4 and cachedTime2 - cachedTime < 5):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 6")
+                elif(cachedTime2 - cachedTime > 3 and cachedTime2 - cachedTime < 4):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 7")
+                elif(cachedTime2 - cachedTime > 2 and cachedTime2 - cachedTime < 3):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 8")
+                elif(cachedTime2 - cachedTime > 1 and cachedTime2 - cachedTime < 2):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 9")
+                elif(cachedTime2 - cachedTime > 0 and cachedTime2 - cachedTime < 1):
+                    bgcanvas.itemconfig(capture_image_label, text="Capturing: 10")
+            else:
+                cachedTime = time()
+                bgcanvas.itemconfig(capture_image_label, text="")
     except:
-        print("No camera detected")
+        bgcanvas.itemconfig(capture_image_label, text="")
+        print(Exception)
         stopVideo()
         videofeed = "fail"
+
+    bgcanvas.itemconfig(capture_image_label, text="")
 
 def stopVideo():
     global videostart
     global testImg
+    global resultImg
     videostart = False
-    if Imagedir == "":
-        bgcanvas.itemconfig(file_label, text="No File Chosen")
-        testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-    else:
-        bgcanvas.itemconfig(file_label, text=Imagedir)
+    bgcanvas.itemconfig(file_label, text="No File Chosen")
+    testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+    resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+
+    bgcanvas.itemconfig(output_label, text="None")
+    bgcanvas.itemconfig(timer_label, text="00.00")
     bgcanvas.itemconfig(test_image, image=testImg)
+    bgcanvas.itemconfig(result_image, image=resultImg)
     bgcanvas.itemconfig(file_button, image=buttonImage)
     bgcanvas.itemconfig(camera_button, image=camera)
+
+    bgcanvas.itemconfig(capture_image_label, text="")
 
 def highlightCam(event):
     global videostart
@@ -825,3 +919,4 @@ def closing():
 opening()
 window = Frame(master=overlay)
 window.mainloop()
+

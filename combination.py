@@ -16,6 +16,25 @@ def imageToMatrix(image):
     # Return Matrix faces
     return result
 
+def imageToMatrix(image):
+    # Image is processed, compressed to 256x256, and flatten to 256^2 x 1
+    image = cv2.imread(image)
+    image = cv2.resize(image,(256,256), interpolation = cv2.INTER_AREA)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    result = gray_image.flatten()
+    
+    # Return Matrix faces
+    return result
+
+def videoToMatrix(image):
+    # Image is processed, compressed to 256x256, and flatten to 256^2 x 1
+    image = cv2.resize(image,(256,256), interpolation = cv2.INTER_AREA)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    result = gray_image.flatten()
+    
+    # Return Matrix faces
+    return result
+
 # Dot product function
 def dot_product(vector_1, vector_2):
     sum = 0

@@ -1,1 +1,1 @@
-setTitle = Label(root, text="Insert Your Dataset", font=(FontType, 18))
+timer_label

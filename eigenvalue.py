@@ -37,7 +37,6 @@ def get_k_eigenvalue_with_accum_q(array):
 
     indexed_array = np.array(indexed_array)
     sorted_array = indexed_array[indexed_array[:,1].argsort(kind='mergesort')[::-1]]
-    print(sorted_array)
     i = 0
     accumulative_sum = 0
     accumulative_array = []

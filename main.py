@@ -79,8 +79,8 @@ def execute(feed):
     global Imagedir
     global resultFace
 
-    global videofeed
-    if not videofeed:
+    global videostart
+    if not videostart:
         resultArray, time_elapsed, filename = algo.main_algo(Folderdir, Imagedir)
         resultArray = asarray(resultArray)
         resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
@@ -102,7 +102,6 @@ def execute(feed):
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(timer_label, text=timerResult)
         bgcanvas.itemconfig(output_label, text=filename)
-        pass
 
 
 #setup

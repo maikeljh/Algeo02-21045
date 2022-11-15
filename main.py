@@ -562,7 +562,6 @@ def rollcred(event):
             mascot_img = bgcanvas.create_image(1250,100, image=mascotImage, anchor=NW)
 
             bgcanvas.tag_raise(handle_location)
-            
 
             for i in range(27):
                 bgcanvas.move(bush_bg, -60, 0)
@@ -602,7 +601,6 @@ def rollcred(event):
             mascot_img = bgcanvas.create_image(widthval-30, 100, image=mascotImage, anchor=NW)
 
             bgcanvas.tag_raise(handle_location)
-            bgcanvas.tag_raise(logo_credits)
 
             for i in range(27):
                 bgcanvas.move(bush_bg, -65, 0)

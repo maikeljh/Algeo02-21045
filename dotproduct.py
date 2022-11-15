@@ -3,8 +3,6 @@ import cv2
 import matplotlib.pyplot as plt
 from eigenface import *
 import numpy as np
-from eigenvector_driver import array_of_eigenfaces, k
-from euclideandst import shortestDst
 
 # Function to extract images from dataset to array of matrix
 def imageToMatrix():
@@ -37,25 +35,29 @@ def dot_product(vector_1, vector_2):
         sum += (vector_1[i] * vector_2[i])
     return sum
 
-# Matrix of test image
-image = imageToMatrix()
+def processTestImage(test_image):
+    # Matrix of test image
+    image = imageToMatrix(test_image)
 
-# Difference of test image with mean face
-differenceTestImage = np.subtract(image, meanFace)
+    return image
 
-# Solve Combination Linear of each training image
-listOfCombination = []
-for item in difference:
-    combination = []
+def differenceTestImage(image, meanFace):
+    # Difference of test image with mean face
+    differenceTestImage = np.subtract(image, meanFace)
+
+    return differenceTestImage
+
+# Calculating the weight of each training faces
+def calculateListOfWeight(difference, array_of_eigenfaces):
+    listOfWeight = []
+    for item in difference:
+        combination = []
+        for eigenface in array_of_eigenfaces:
+            combination.append(dot_product(item, eigenface))
+        listOfWeight.append(combination)
+
+# Calculate the weight
+def calculateWeightTest(array_of_eigenfaces, differenceTestImage):
+    weight_test = []
     for eigenface in array_of_eigenfaces:
-        combination.append(dot_product(item, eigenface))
-    listOfCombination.append(combination)
-
-combination_test = []
-for eigenface in array_of_eigenfaces:
-        combination_test.append(dot_product(differenceTestImage, eigenface))
-
-minim = shortestDst(combination_test, listOfCombination)
-
-plt.imshow(reshapeImage(listOfMatrixFace[minim]), cmap="gray")
-plt.show()
+            weight_test.append(dot_product(differenceTestImage, eigenface))

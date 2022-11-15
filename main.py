@@ -3,10 +3,9 @@ from tkinter import filedialog
 from PIL import ImageTk, Image
 from os import _exit
 from time import time, sleep
-import threading
-import numpy as np
+from datetime import timedelta
+from numpy import asarray
 import cv2
-import datetime
 
 import main_algo as algo
 
@@ -83,22 +82,22 @@ def execute(feed):
     global videofeed
     if not videofeed:
         resultArray, time_elapsed, filename = algo.main_algo(Folderdir, Imagedir)
-        resultArray = np.asarray(resultArray)
+        resultArray = asarray(resultArray)
         resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
         resultImg = ImageTk.PhotoImage(image=resultFace)
 
-        timerResult = str(datetime.timedelta(milliseconds=time_elapsed*1000))
+        timerResult = str(timedelta(milliseconds=time_elapsed*1000))
 
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(timer_label, text=timerResult)
         bgcanvas.itemconfig(output_label, text=filename)
     else:
         resultArray, time_elapsed, filename = algo.camera_algo(Folderdir, feed)
-        resultArray = np.asarray(resultArray)
+        resultArray = asarray(resultArray)
         resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
         resultImg = ImageTk.PhotoImage(image=resultFace)
 
-        timerResult = str(datetime.timedelta(milliseconds=time_elapsed*1000))
+        timerResult = str(timedelta(milliseconds=time_elapsed*1000))
 
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(timer_label, text=timerResult)
@@ -672,8 +671,6 @@ bgcanvas.tag_bind(logo_credits, '<ButtonPress-1>', rollcred)
 #Bonus Video feed
 videofeed = "none"
 videostart = False
-
-
 def startVideo():    
     try:
         global Imagedir
@@ -726,7 +723,7 @@ def startVideo():
                     if not captured:
                         captured = True
                         bgcanvas.itemconfig(capture_image_label, text="Captured")
-                        feedArray = np.asarray(testImg)
+                        feedArray = asarray(testImg)
                         feed = algo.cb.videoToMatrix(feedArray)
                         execute(feed)
                         

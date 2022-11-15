@@ -10,10 +10,11 @@ def euclideandst(vektor1, vektor2):
 
 def shortestDst(vektor, matriksVektor):
 #matriksVektor si jumlah kolomnya sama kek vektor 2 kan ya
-    cachemin = max()
-    for i in range(len(matriksVektor)):
-        sum = 0
+    cachemin = euclideandst(vektor, matriksVektor[0])
+    idx = 0
+    for i in range(1, len(matriksVektor)):
         sum = euclideandst(vektor, matriksVektor[i])
         if sum < cachemin:
             cachemin = sum
-    return cachemin
+            idx = i
+    return idx

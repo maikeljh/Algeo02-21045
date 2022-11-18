@@ -53,7 +53,7 @@ def matrix_schur_form(matrix):
     schur_form = qr_iteration(hessenberg_matrix, ITERATION)
 
     
-    return schur_form;
+    return schur_form
 
 def diagonal_mean_absolute(matrix):
     array_diagonal = matrix.diagonal()

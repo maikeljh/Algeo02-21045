@@ -5,8 +5,9 @@ from os import _exit
 from time import time, sleep
 from datetime import timedelta
 from numpy import asarray
-import cv2
+from threading import Thread
 
+import cv2
 import main_algo as algo
 
 #globar var
@@ -15,10 +16,21 @@ Folderdir = ""
 Imagedir = ""
 Fullscreen = False
 viewFinderRes = 350
-cameraStandbytime = 15
-cameraCapturetime = 10
+cameraStandbytime = 10
+siderunning = False
+siderunning2 = False
+
+secondaryThread = Thread()
+timerThread = Thread()
+tertiaryThread = Thread()
 
 #keperluan backend
+meanFace = ""
+array_of_eigenfaces = ""
+listOfCombination = ""
+listOfMatrixFace = ""
+k = ""
+
 def setClick():
     folder_path = filedialog.askdirectory()
     global testImg
@@ -26,20 +38,45 @@ def setClick():
     global Folderdir
     global Imagedir
     global bgcanvas
+
+    global meanFace
+    global array_of_eigenfaces
+    global listOfCombination
+    global listOfMatrixFace
+    global k
+
+    global secondaryThread
+    global timerThread
+    global tertiaryThread
+
     if folder_path != "":
+
+        secondaryThread = Thread(target= lambda: loadSet(folder_path))
+        timerThread = Thread(target= lambda: timeCount(2))
+        secondaryThread.start()
+        timerThread.start()
+        
         bgcanvas.itemconfig(set_label, text=folder_path)
         Folderdir = folder_path
         if Imagedir == "":
             pass
         else:
-            execute(0)
+            tertiaryThread = Thread(target=lambda: segmenter())
+            tertiaryThread.start()
     else:
         resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(set_label, text="No Folder Chosen") 
         bgcanvas.itemconfig(output_label, text="None")
-        bgcanvas.itemconfig(timer_label, text="00.00")
+        bgcanvas.itemconfig(timer_label, text="0:00:00")
         Folderdir = folder_path
+
+        meanFace = ""
+        array_of_eigenfaces = ""
+        listOfCombination = ""
+        listOfMatrixFace = ""
+        k = ""
+
     return
 
 def fileClick():
@@ -49,6 +86,10 @@ def fileClick():
     global Folderdir
     global Imagedir
     global bgcanvas
+
+    global secondaryThread
+    global timerThread
+
     if image_path != "":
         testImg = ImageTk.PhotoImage(Image.open(image_path).resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(file_label, text=image_path)
@@ -58,9 +99,12 @@ def fileClick():
             resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
             bgcanvas.itemconfig(output_label, text="None")
             bgcanvas.itemconfig(result_image, image=resultImg)
-            bgcanvas.itemconfig(timer_label, text="00.00")
+            bgcanvas.itemconfig(timer_label, text="0:00:00")
         else:
-            execute(0)
+            secondaryThread = Thread(target=lambda: executeSplit(0))
+            timerThread = Thread(target= lambda: timeCount(1))
+            secondaryThread.start()
+            timerThread.start()
     else:
         testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(file_label, text="No File Chosen")
@@ -69,40 +113,84 @@ def fileClick():
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(test_image, image=testImg)
         bgcanvas.itemconfig(output_label, text="None")
-        bgcanvas.itemconfig(timer_label, text="00.00")
+        bgcanvas.itemconfig(timer_label, text="0:00:00")
         Imagedir = image_path
     return
 
-def execute(feed):
+def loadSet(folder_path):
+    global meanFace
+    global array_of_eigenfaces
+    global listOfCombination
+    global listOfMatrixFace
+    global k
+
+    global siderunning
+    global siderunning2
+
+    siderunning = True
+    siderunning2 = True
+    meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, k = algo.Load_Dataset(folder_path)
+    siderunning = False
+    siderunning2 = False
+
+def segmenter():
+    global secondaryThread
+    global timerThread
+
+    secondaryThread.join()
+    timerThread.join()
+    secondaryThread = Thread(target=lambda: executeSplit(0))
+    timerThread = Thread(target= lambda: timeCount(1))
+    secondaryThread.start()
+    timerThread.start()
+
+
+def executeSplit(feed):
     global resultImg
-    global Folderdir
-    global Imagedir
     global resultFace
 
-    global videostart
+    global meanFace
+    global array_of_eigenfaces
+    global listOfCombination
+    global listOfMatrixFace
+    global k
+    global Imagedir
+    global Folderdir
+
+    global siderunning
+    siderunning = True
     if not videostart:
-        resultArray, time_elapsed, filename = algo.main_algo(Folderdir, Imagedir)
+        resultArray, filename = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, Folderdir, k, 1)
         resultArray = asarray(resultArray)
         resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
         resultImg = ImageTk.PhotoImage(image=resultFace)
 
-        timerResult = str(timedelta(milliseconds=time_elapsed*1000))
-
         bgcanvas.itemconfig(result_image, image=resultImg)
-        bgcanvas.itemconfig(timer_label, text=timerResult)
         bgcanvas.itemconfig(output_label, text=filename)
     else:
-        resultArray, time_elapsed, filename = algo.camera_algo(Folderdir, feed)
+        resultArray, filename = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, Folderdir, k, 2)
         resultArray = asarray(resultArray)
         resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
         resultImg = ImageTk.PhotoImage(image=resultFace)
 
-        timerResult = str(timedelta(milliseconds=time_elapsed*1000))
-
         bgcanvas.itemconfig(result_image, image=resultImg)
-        bgcanvas.itemconfig(timer_label, text=timerResult)
         bgcanvas.itemconfig(output_label, text=filename)
+    siderunning = False
 
+def timeCount(type):
+    global siderunning
+    time_started = time()
+    time_elapsed = time()
+    if type == 1:
+        while siderunning:
+            time_elapsed = time() - time_started
+            timerResult = str(timedelta(milliseconds=time_elapsed*1000))
+            bgcanvas.itemconfig(timer_label, text=timerResult)
+    elif type == 2:
+        while siderunning:
+            time_elapsed = time() - time_started
+            timerResult = str(timedelta(milliseconds=time_elapsed*1000))
+            bgcanvas.itemconfig(timer_label_load, text=timerResult)
 
 #setup
 overlay = Tk()
@@ -135,7 +223,7 @@ noImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,v
 logoImg = ImageTk.PhotoImage(Image.open("gui/icon.ico").resize((50,50)))
 logoImgHl = ImageTk.PhotoImage(Image.open("gui/iconhl.ico").resize((50,50)))
 handleMark = ImageTk.PhotoImage(Image.open("gui/nullImg.png").resize((1280,30)))
-
+facespot = ImageTk.PhotoImage(Image.open("gui/facespot.png").resize((viewFinderRes,viewFinderRes)))
 
 camera = ImageTk.PhotoImage(Image.open("gui/camera.png").resize((30,30)))
 cameraHl = ImageTk.PhotoImage(Image.open("gui/camerahl.png").resize((30,30)))
@@ -214,6 +302,7 @@ def fullify():
         newdst3 = widthval*300//1280
         newdst4 = widthval*400//1280
         newdst5 = widthval*170//1280
+        newdst6 = widthval*240//1280
 
         bgcanvas.coords(title_text, widthval/2, 40)#bgcanvas.create_text(640, 40, anchor = N, text="Face Recognition", font=(FontType, 36))
         bgcanvas.coords(title_line, 50, 110, widthval-50, 110)#bgcanvas.create_line(50,110,1230,110, width=2)
@@ -230,15 +319,22 @@ def fullify():
 
         bgcanvas.coords(result_label, 100, 390+newdst1)#bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
         bgcanvas.coords(output_label, 130, 440+newdst1)#bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01D901")
+        bgcanvas.itemconfig(output_label, width=newdst6)
         
         #Main viewfinder
         bgcanvas.coords(test_image_label, 100+newdst3, 110+newdst2)#bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
         bgcanvas.coords(test_image, 100+newdst3, 120+newdst2)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
+        bgcanvas.coords(face_spot, 100+newdst3, 120+newdst2)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
+        
+
         bgcanvas.coords(result_image_label, 100+newdst3+newdst4, 110+newdst2)#bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
         bgcanvas.coords(result_image, 100+newdst3+newdst4, 120+newdst2)#bgcanvas.create_image(800,160, anchor=NW, image=testImg)
         
         bgcanvas.coords(capture_image_label, 100+newdst3, 130+newdst2+viewFinderRes)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
         #timer
+        bgcanvas.coords(timer_title_load, 100+newdst3, 160+newdst2+viewFinderRes)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
+        bgcanvas.coords(timer_label_load, 230+newdst3, 161+newdst2+viewFinderRes)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
+
         bgcanvas.coords(timer_title, 100+newdst3, 190+newdst2+viewFinderRes)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
         bgcanvas.coords(timer_label, 230+newdst3, 191+newdst2+viewFinderRes)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
 
@@ -328,9 +424,7 @@ def winify():
         global resultImg
         global testImg
         global resultImg
-        global resultFace
-        
-        
+        global resultFace        
 
         global bgImage
         bgImage = ImageTk.PhotoImage(Image.open("gui/bg.png").resize((1280,720)))
@@ -351,15 +445,22 @@ def winify():
 
         bgcanvas.coords(result_label, 100, 450)#bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
         bgcanvas.coords(output_label, 130, 490)#bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01D901")
+        bgcanvas.itemconfig(output_label, width=240)
         
         #Main viewfinder
         bgcanvas.coords(test_image_label, 400, 150)#bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
         bgcanvas.coords(test_image, 400, 160)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
+        bgcanvas.coords(face_spot, 400, 160)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
+        
+
         bgcanvas.coords(result_image_label, 800, 150)#bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
         bgcanvas.coords(result_image, 800, 160)#bgcanvas.create_image(800,160, anchor=NW, image=testImg)
 
         bgcanvas.coords(capture_image_label, 400, 520)#bgcanvas.create_image(400,160, anchor=NW, image=testImg)
         #timer
+        bgcanvas.coords(timer_title_load, 400, 550)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
+        bgcanvas.coords(timer_label_load, 531, 551)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
+
         bgcanvas.coords(timer_title, 400, 580)#bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
         bgcanvas.coords(timer_label, 531, 581)#bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01E901")
 
@@ -464,17 +565,22 @@ file_button = bgcanvas.create_image(100, 350, anchor=W, image=buttonImage)
 file_label = bgcanvas.create_text(200, 340, anchor = NW, text="No File Chosen", font=(FontType, 12),width=170)
 
 result_label = bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
-output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01DA01")
+output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01DA01", width=240)
 #Main viewfinder
 test_image_label = bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
 test_image = bgcanvas.create_image(400,160, anchor=NW, image=testImg)
+face_spot = bgcanvas.create_image(400,160, anchor=NW, image=nullImg)
+
 result_image_label = bgcanvas.create_text(800, 150, anchor = W, text="Result Image", font=(FontType, 14))
 result_image = bgcanvas.create_image(800,160, anchor=NW, image=testImg)
 
 capture_image_label = bgcanvas.create_text(400, 520, anchor = W, text="", font=(FontType, 14))
 #timer
+timer_title_load = bgcanvas.create_text(400, 550, anchor = W, text="Load Time         :", font=(FontType, 14))
+timer_label_load = bgcanvas.create_text(530, 551, anchor = W, text="0:00:00", font=(FontType, 15), fill="#01FA01")
+
 timer_title = bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
-timer_label = bgcanvas.create_text(530, 581, anchor = W, text="00.00", font=(FontType, 15), fill="#01FA01")
+timer_label = bgcanvas.create_text(530, 581, anchor = W, text="0:00:00", font=(FontType, 15), fill="#01FA01")
 
 #logo credits
 logo_credits = bgcanvas.create_image(1200,640,anchor=NW,image=logoImg)
@@ -677,6 +783,13 @@ def startVideo():
         global videostart
         global videofeed
         global testImg
+        global facespot
+
+        global secondaryThread
+        global timerThread
+                        
+        global siderunning2
+
         videostart = True
         Imagedir = ""
 
@@ -700,6 +813,7 @@ def startVideo():
         bgcanvas.itemconfig(file_label, text="Camera Feed")
         bgcanvas.itemconfig(file_button, image=buttonImageOff)
         bgcanvas.itemconfig(camera_button, image=cameraClose)
+        facespot = ImageTk.PhotoImage(Image.open("gui/facespot.png").resize((viewFinderRes,viewFinderRes)))
 
         cachedTime = time()
         captured = False
@@ -714,17 +828,22 @@ def startVideo():
             bgcanvas.itemconfig(test_image, image=videofeed)
             windowrt.update()
 
-            if Folderdir != "":
-                if (cachedTime2 - cachedTime > cameraCapturetime + cameraStandbytime):
+            if Folderdir != "" and not siderunning2:
+                if (cachedTime2 - cachedTime > 10 + cameraStandbytime):
                     cachedTime = cachedTime2
                     captured = False
-                elif (cachedTime2 - cachedTime > cameraCapturetime):
+                elif (cachedTime2 - cachedTime > 10):
                     if not captured:
                         captured = True
                         bgcanvas.itemconfig(capture_image_label, text="Captured")
+                        bgcanvas.itemconfig(face_spot, image=nullImg)
                         feedArray = asarray(testImg)
                         feed = algo.cb.videoToMatrix(feedArray)
-                        execute(feed)
+                    
+                        secondaryThread = Thread(target= lambda: executeSplit(feed))
+                        timerThread = Thread(target= lambda: timeCount(1))
+                        secondaryThread.start()
+                        timerThread.start()
                         
                 elif(cachedTime2 - cachedTime > 9 and cachedTime2 - cachedTime < 10):
                     bgcanvas.itemconfig(capture_image_label, text="Capturing: 1")
@@ -746,6 +865,7 @@ def startVideo():
                     bgcanvas.itemconfig(capture_image_label, text="Capturing: 9")
                 elif(cachedTime2 - cachedTime > 0 and cachedTime2 - cachedTime < 1):
                     bgcanvas.itemconfig(capture_image_label, text="Capturing: 10")
+                    bgcanvas.itemconfig(face_spot, image=facespot)
             else:
                 cachedTime = time()
                 bgcanvas.itemconfig(capture_image_label, text="")
@@ -765,9 +885,10 @@ def stopVideo():
     bgcanvas.itemconfig(file_label, text="No File Chosen")
     testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
     resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+    bgcanvas.itemconfig(face_spot, image=nullImg)
 
     bgcanvas.itemconfig(output_label, text="None")
-    bgcanvas.itemconfig(timer_label, text="00.00")
+    bgcanvas.itemconfig(timer_label, text="0:00:00")
     bgcanvas.itemconfig(test_image, image=testImg)
     bgcanvas.itemconfig(result_image, image=resultImg)
     bgcanvas.itemconfig(file_button, image=buttonImage)

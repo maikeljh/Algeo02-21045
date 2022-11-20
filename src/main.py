@@ -185,7 +185,7 @@ def loadSet(folder_path):
 
     siderunning = True
     siderunning2 = True
-    meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, k = algo.Load_Dataset(folder_path)
+    meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace = algo.Load_Dataset(folder_path)
     siderunning = False
     siderunning2 = False
 
@@ -239,16 +239,15 @@ def executeSplit(feed):
     global array_of_eigenfaces
     global listOfCombination
     global listOfFixedMatrixFace
-    global k
     global Imagedir
     global Folderdir
 
     global siderunning
     siderunning = True
     if not videostart:
-        resultArray, filename, dst = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 1)
+        resultArray, filename, dst = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, 1)
     else:
-        resultArray, filename, dst = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 2)
+        resultArray, filename, dst = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, 2)
 
     resultArray = asarray(resultArray)
     resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))

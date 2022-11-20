@@ -22,7 +22,6 @@ def Load_Dataset(dataset):
         array_of_eigenfaces (array)     : array of eigen faces
         listOfCombination (array)       : array of combination
         listOfFixMatrixFace (array)     : array of matrix faces in RGB Mode
-        k (integer)                     : the amount of eigen faces
     """
     # Step 1
     # Getting list of matrix faces
@@ -58,7 +57,7 @@ def Load_Dataset(dataset):
     # Compute list of linear combinations of training faces
     listOfCombination = cb.solveCombinationLinear(difference, array_of_eigenfaces)
 
-    return meanFace, array_of_eigenfaces, listOfCombination, listOfFixMatrixFace, k
+    return meanFace, array_of_eigenfaces, listOfCombination, listOfFixMatrixFace
 
 def solveImage(test_image, meanFace, array_of_eigenfaces, listOfCombination, listOfFixMatrixFace, dataset, type):
     """

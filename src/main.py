@@ -29,7 +29,6 @@ meanFace = ""
 array_of_eigenfaces = ""
 listOfCombination = ""
 listOfFixedMatrixFace = ""
-k = ""
 
 def setClick():
     """
@@ -93,7 +92,6 @@ def setClick():
         array_of_eigenfaces = ""
         listOfCombination = ""
         listOfFixedMatrixFace = ""
-        k = ""
 
     return
 
@@ -178,7 +176,6 @@ def loadSet(folder_path):
     global array_of_eigenfaces
     global listOfCombination
     global listOfFixedMatrixFace
-    global k
 
     global siderunning
     global siderunning2

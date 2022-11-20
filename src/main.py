@@ -163,9 +163,9 @@ def executeSplit(feed):
     global siderunning
     siderunning = True
     if not videostart:
-        resultArray, filename, dst = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 1)
+        resultArray, filename, dst = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, 1)
     else:
-        resultArray, filename, dst = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 2)
+        resultArray, filename, dst = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, 2)
 
     resultArray = asarray(resultArray)
     resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))

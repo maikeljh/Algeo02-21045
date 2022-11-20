@@ -358,10 +358,10 @@ def fullwinswitch(widthval, heightval):
         bgcanvas.coords(text2, 40, 50+1*newdst6)
         bgcanvas.coords(text3, 40, 50+2*newdst6)
         bgcanvas.coords(text4, 40, 50+3*newdst6)
-        bgcanvas.itemconfig(text1, font=(fontsz1))
-        bgcanvas.itemconfig(text2, font=(fontsz2))
-        bgcanvas.itemconfig(text3, font=(fontsz2))
-        bgcanvas.itemconfig(text4, font=(fontsz2))
+        bgcanvas.itemconfig(text1, font=("Kristen ITC", fontsz1))
+        bgcanvas.itemconfig(text2, font=("Kristen ITC", fontsz2))
+        bgcanvas.itemconfig(text3, font=("Kristen ITC", fontsz2))
+        bgcanvas.itemconfig(text4, font=("Kristen ITC", fontsz2))
 
         mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png").resize((widthval*428//1280, heightval*1218//720)))
         bgcanvas.coords(mascot_img, widthval-(29*(widthval*10//1280)), 100)
@@ -775,19 +775,20 @@ bgcanvas.tag_bind(camera_button, '<Leave>', unhighlightCam)
 bgcanvas.tag_bind(camera_button, '<ButtonPress-1>', cameraPress)
 
 #splash screen
+images = []
+def editalpha(x1, y1, x2, y2, **kwargs):
+    if 'alpha' in kwargs:
+        alpha = int(kwargs.pop('alpha') * 255)
+        fill = kwargs.pop('fill')
+        fill = windowrt.winfo_rgb(fill) + (alpha,)
+        image = Image.new('RGBA', (x2-x1, y2-y1), fill)
+        images.append(ImageTk.PhotoImage(image))
+        img = bgcanvas.create_image(x1, y1, image=images[-1], anchor='nw')
+    return img
+
 def opening():
     global Fullscreen
     Fullscreen = True
-    images = []
-    def editalpha(x1, y1, x2, y2, **kwargs):
-        if 'alpha' in kwargs:
-            alpha = int(kwargs.pop('alpha') * 255)
-            fill = kwargs.pop('fill')
-            fill = windowrt.winfo_rgb(fill) + (alpha,)
-            image = Image.new('RGBA', (x2-x1, y2-y1), fill)
-            images.append(ImageTk.PhotoImage(image))
-            img = bgcanvas.create_image(x1, y1, image=images[-1], anchor='nw')
-        return img
 
     bushImage = ImageTk.PhotoImage(Image.open("gui/bush.png"))
     logoImage = ImageTk.PhotoImage(Image.open("gui/icon.ico"))
@@ -838,16 +839,6 @@ def opening():
 #closing screen
 def closing():
     global Fullscreen
-    images = []
-    def editalpha(x1, y1, x2, y2, **kwargs):
-        if 'alpha' in kwargs:
-            alpha = int(kwargs.pop('alpha') * 255)
-            fill = kwargs.pop('fill')
-            fill = windowrt.winfo_rgb(fill) + (alpha,)
-            image = Image.new('RGBA', (x2-x1, y2-y1), fill)
-            images.append(ImageTk.PhotoImage(image))
-            img = bgcanvas.create_image(x1, y1, image=images[-1], anchor='nw')
-        return img
 
     if Fullscreen == False:
         Fullscreen = True

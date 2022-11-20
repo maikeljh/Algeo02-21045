@@ -96,7 +96,8 @@ def solveCombinationLinear(difference, array_of_eigenfaces):
     return listOfCombination
 
 def solveCombinationLinearTestImage(array_of_eigenfaces, differenceTestImage):
-    """_summary_
+    """
+    Calculate the linear combination of test image
 
     Args:
         array_of_eigenfaces (array): list of eigenfaces

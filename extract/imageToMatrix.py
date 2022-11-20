@@ -7,10 +7,13 @@ import matplotlib.pyplot as plt
 def FolderImageToListOfMatrix(folder):
     # Initiate List of Matrix Faces
     listOfMatrixFace = []
+    listOfFixMatrixFace = []
     for filename in os.listdir(folder):
         # Each image is processed, compressed to 256x256, and flatten to 256^2 x 1
         image = cv2.imread(os.path.join(folder,filename))
         image = cv2.resize(image,(256,256), interpolation = cv2.INTER_AREA)
+        rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        listOfFixMatrixFace.append(rgb_image)
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         result = gray_image.flatten()
 
@@ -18,7 +21,7 @@ def FolderImageToListOfMatrix(folder):
         listOfMatrixFace.append(result)
     
     # Return List Of Matrix faces
-    return listOfMatrixFace
+    return listOfMatrixFace, listOfFixMatrixFace
 
 # Reshape Image from 1 x 256^2 to 256x256 to display
 def reshapeImage(face):
@@ -35,7 +38,3 @@ def reshapeImage(face):
 
 # Make list of matrix faces from dataset
 listOfMatrixFace = FolderImageToListOfMatrix("dataset")
-
-# Show First Image
-# plt.imshow(reshapeImage(listOfMatrixFace[0]) , cmap="gray")
-# plt.show()

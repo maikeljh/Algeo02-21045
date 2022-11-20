@@ -28,7 +28,7 @@ tertiaryThread = Thread()
 meanFace = ""
 array_of_eigenfaces = ""
 listOfCombination = ""
-listOfMatrixFace = ""
+listOfFixedMatrixFace = ""
 k = ""
 
 def setClick():
@@ -42,7 +42,7 @@ def setClick():
     global meanFace
     global array_of_eigenfaces
     global listOfCombination
-    global listOfMatrixFace
+    global listOfFixedMatrixFace
     global k
 
     global secondaryThread
@@ -74,7 +74,7 @@ def setClick():
         meanFace = ""
         array_of_eigenfaces = ""
         listOfCombination = ""
-        listOfMatrixFace = ""
+        listOfFixedMatrixFace = ""
         k = ""
 
     return
@@ -121,7 +121,7 @@ def loadSet(folder_path):
     global meanFace
     global array_of_eigenfaces
     global listOfCombination
-    global listOfMatrixFace
+    global listOfFixedMatrixFace
     global k
 
     global siderunning
@@ -129,7 +129,7 @@ def loadSet(folder_path):
 
     siderunning = True
     siderunning2 = True
-    meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, k = algo.Load_Dataset(folder_path)
+    meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, k = algo.Load_Dataset(folder_path)
     siderunning = False
     siderunning2 = False
 
@@ -152,7 +152,7 @@ def executeSplit(feed):
     global meanFace
     global array_of_eigenfaces
     global listOfCombination
-    global listOfMatrixFace
+    global listOfFixedMatrixFace
     global k
     global Imagedir
     global Folderdir
@@ -160,9 +160,9 @@ def executeSplit(feed):
     global siderunning
     siderunning = True
     if not videostart:
-        resultArray, filename = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, Folderdir, k, 1)
+        resultArray, filename = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 1)
     else:
-        resultArray, filename = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, Folderdir, k, 2)
+        resultArray, filename = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 2)
 
     resultArray = asarray(resultArray)
     resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))

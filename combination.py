@@ -25,13 +25,6 @@ def videoToMatrix(image):
     # Return Matrix faces
     return result
 
-# Dot product function
-def dot_product(vector_1, vector_2):
-    sum = 0
-    for i in range(len(vector_1)):
-        sum += (vector_1[i] * vector_2[i])
-    return sum
-
 def processTestImage(test_image):
     # Matrix of test image
     image = imageToMatrix(test_image)
@@ -50,7 +43,7 @@ def solveCombinationLinear(difference, array_of_eigenfaces, k):
     for item in difference:
         combination = []
         for eigenface in array_of_eigenfaces:
-            dot = dot_product(eigenface, item)
+            dot = np.matmul(eigenface, item)
             combination.append(dot)
         listOfCombination.append(combination)
     
@@ -59,11 +52,11 @@ def solveCombinationLinear(difference, array_of_eigenfaces, k):
 def solveCombinationLinearTestImage(array_of_eigenfaces, differenceTestImage, k):
     combination_test = []
     for eigenface in array_of_eigenfaces:
-        dot = dot_product(eigenface, differenceTestImage)
+        dot = np.matmul(eigenface, differenceTestImage)
         combination_test.append(dot)
 
     return combination_test
 
 def showClosestImage(image):
-    plt.imshow(cv2.cvtColor(np.matrix(image), cv2.COLOR_BGR2RGB))
+    plt.imshow(cv2.cvtColor(np.matrix(image), cv2.COLOR_GRAY2RGB))
     plt.show()

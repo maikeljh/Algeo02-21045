@@ -1,13 +1,22 @@
 # Import library and os
 import cv2
 import os
-import matplotlib.pyplot as plt
 
-# Function to extract images from dataset to array of matrix
 def FolderImageToListOfMatrix(folder):
+    """
+    Function to extract images from dataset to array of matrix
+
+    Args:
+        folder (string): pathname to folder of dataset
+
+    Returns:
+        listOfMatrixFace (array): list of matrix face that has been resized and grayed
+        listOfFixMatrixFace (array): list of matrix face in RGB
+    """
     # Initiate List of Matrix Faces
     listOfMatrixFace = []
     listOfFixMatrixFace = []
+    
     for filename in os.listdir(folder):
         # Each image is processed, compressed to 256x256, and flatten to 256^2 x 1
         image = cv2.imread(os.path.join(folder,filename))
@@ -23,8 +32,16 @@ def FolderImageToListOfMatrix(folder):
     # Return List Of Matrix faces
     return listOfMatrixFace, listOfFixMatrixFace
 
-# Reshape Image from 1 x 256^2 to 256x256 to display
 def reshapeImage(face):
+    """
+    Reshape image matrix from 1 x 256^2 to 256x256
+
+    Args:
+        face (array): image in shape of flatten
+
+    Returns:
+        shape (matrix): image in shape of 256x256
+    """
     x = 0
     shape = []
     for i in range(256):

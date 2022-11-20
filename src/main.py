@@ -32,6 +32,23 @@ listOfFixedMatrixFace = ""
 k = ""
 
 def setClick():
+    """
+    Function to integrate button click into dataset loading, if test image is loaded automatically executes eigenface algorithm
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program not currently loading image
+    F.S.:
+        Folder choosing window will appear for user to select a dataset
+        Dataset location then will be passed to loadSet function
+        if test image is loaded, automatically executes eigenface algorithm
+    """
+    
     folder_path = filedialog.askdirectory()
     global testImg
     global resultImg
@@ -81,6 +98,22 @@ def setClick():
     return
 
 def fileClick():
+    """
+    Function to integrate button click into image test loading, if dataset is loaded automatically executes eigenface algorithm
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program not currently loading image, loading dataset, or using camera as viewfinder
+    F.S.:
+        File choosing window will appear for user to select a test image
+        Test image is loaded to the program
+        if dataset is loaded, automatically executes eigenface algorithm
+    """
     image_path = filedialog.askopenfilename()
     global testImg
     global resultImg
@@ -121,6 +154,26 @@ def fileClick():
     return
 
 def loadSet(folder_path):
+    """
+    Function to fetch necessary values from dataset
+
+    Args:
+        folder_path (string): path to dataset folder
+    
+    Returns:
+        None
+
+    I.S.:
+        Program not currently loading image
+    F.S.:
+        Dataset is loaded and ready for use in eigenface algorithm
+        While this function does not return a value, it keeps data in global variables:
+        -meanFace (matrix): Average face from a dataset
+        -array_of_eigenfaces (matrix): Array of eigenfaces obtained from dataset
+        -listOfCombination (array): Array from linear combination
+        -listOfFixedMatrixFace (matrix): list of faces in rgb
+        -k (int): number of taken eigenfaces
+    """
     global meanFace
     global array_of_eigenfaces
     global listOfCombination
@@ -137,6 +190,21 @@ def loadSet(folder_path):
     siderunning2 = False
 
 def segmenter():
+    """
+    Function to segment the program executing order in case of image load then dataset load order
+    in which the dataset should be loaded first before executing eigenface algorithm
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program loaded image before loading dataset
+    F.S.:
+        Dataset is loaded first then eigenface algorithm is executed
+    """
     global secondaryThread
     global timerThread
 
@@ -149,6 +217,21 @@ def segmenter():
 
 
 def executeSplit(feed):
+    """
+    Function to execute eigenface algorithm
+
+    Args:
+        feed (matrix): Matrix value from camera feed
+    
+    Returns:
+        None
+
+    I.S.:
+        Dataset is loaded, test image is chosen or camera feed is active
+    F.S.:
+        Closest image from dataset is shown in result image
+        Euclidean distance shown in label
+    """
     global resultImg
     global resultFace
 
@@ -178,6 +261,20 @@ def executeSplit(feed):
     siderunning = False
 
 def timeCount(type):
+    """
+    Function to execute eigenface algorithm
+
+    Args:
+        type (int): int value to determine which counter is being used, 1 for execution, 2 for load 
+    
+    Returns:
+        None
+
+    I.S.:
+        Dataset is being loaded or eigenface algorithm is being executed
+    F.S.:
+        Elapsed time of operation shown in the corresponding label in real time
+    """
     global siderunning
     time_started = time()
     time_elapsed = time()
@@ -201,10 +298,39 @@ windowrt.geometry("1280x720")
 windowrt.overrideredirect(1)
 bgcanvas = Canvas(windowrt)
 
+"Fun fact! di sini titlebar dan window managementnya dicustom, makanya ada fungsi ini"
 def onRootIconify(event):
+    """
+    Function to minimize window to tray
+
+    Args:
+        event (event): action trigger, in this case it is always <Unmap>, the unmapping of overlay
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is shown
+    F.S.:
+        GUI window is minimized to tray
+    """
     windowrt.withdraw()
 overlay.bind("<Unmap>", onRootIconify)
 def onRootDeiconify(event):
+    """
+    Function to minimize display window from tray
+
+    Args:
+        event (event): action trigger, in this case it is always <Map>, the mapping of overlay
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is minimized to tray
+    F.S.:
+        GUI window is shown
+    """
     windowrt.deiconify()
 overlay.bind("<Map>", onRootDeiconify)
 
@@ -236,14 +362,56 @@ resultImg = noImg
 handle = Label(windowrt,height=28,width=1280,image=nullImg, bg="#AADDFF")
 
 def start_move(event):
+    """
+    Function to move window in case of a mouse drag in handle
+
+    Args:
+        event (event): action trigger, in this case it is always <ButtonPress-1>, left mouse button click
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is static
+    F.S.:
+        GUI window is ready to move
+    """
     if Fullscreen == False:
         windowrt.x = event.x
         windowrt.y = event.y
 def stop_move(event):
+    """
+    Function to stop window movement in case of a mouse drag release in handle
+
+    Args:
+        event (event): action trigger, in this case it is always <ButtonRelease-1>, left mouse button release
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is being moved according to mouse movement
+    F.S.:
+        GUI window is static
+    """
     if Fullscreen == False:
         windowrt.x = None
         windowrt.y = None
 def do_move(event):
+    """
+    Function to stop window movement in case of a mouse drag release in handle
+
+    Args:
+        event (event): action trigger, in this case it is always <ButtonRelease-1>, left mouse button release
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is ready to move
+    F.S.:
+        GUI window is being moved according to mouse movement
+    """
     if Fullscreen == False:
         deltax = event.x - windowrt.x
         deltay = event.y - windowrt.y
@@ -251,9 +419,37 @@ def do_move(event):
         y = windowrt.winfo_y() + deltay
         windowrt.geometry(f"+{x}+{y}")
 def minimize():
+    """
+    Function to integrate minimize button to iconify function
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        GUI window is shown
+    F.S.:
+        GUI window is minimized to tray
+    """
     windowrt.update_idletasks()
     overlay.iconify()
 def close():
+    """
+    Function to integrate close button into closing functions
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program is running
+    F.S.:
+        Closing animation is played and program is stopped
+    """
     closing()
     _exit(0)
 
@@ -263,6 +459,21 @@ handle.bind("<B1-Motion>", do_move)
 
 #fitur fullscreen
 def fullwinswitch(widthval, heightval):
+    """
+    Function to switch window to a new window size
+
+    Args:
+        widthval (int): width value of new window size
+        heightval (int): height value of new window size
+    
+    Returns:
+        None
+
+    I.S.:
+        Program is running, opening animation currently not playing
+    F.S.:
+        Window size changes into widthvalxheightval
+    """
     formervid = videostart
     if formervid:
         stopVideo()
@@ -394,6 +605,21 @@ def fullwinswitch(widthval, heightval):
     
 
 def fullify():
+    """
+    Function to switch window to full screen mode
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program currently in windowed mode, opening animation currently not playing
+    F.S.:
+        Window size changes into size of the screen
+        Fullscreen button changes into window button
+    """
     global Fullscreen
     if Fullscreen == False:
         Fullscreen = True
@@ -406,6 +632,21 @@ def fullify():
         fullwinswitch(widthval, heightval)
 
 def winify():
+    """
+    Function to switch window to windowed mode
+
+    Args:
+        None
+    
+    Returns:
+        None
+
+    I.S.:
+        Program currently in fullscreen mode
+    F.S.:
+        Window size changes into 1280x720
+        Window button changes into fullscreen button
+    """
     global Fullscreen
     if Fullscreen == True:
         Fullscreen = False
@@ -420,11 +661,47 @@ def winify():
 
 #custom window buttons
 def highlight(event, background, Hlimage):
+    """
+    Function to switch button into highlight background and image in case of mouse entering button area
+
+    Args:
+        event (event): action trigger, in this case it is always <Enter>, the hovering of cursor in the area of the button
+        background (_Color): new background in case of hover
+        Hlimage (imageTK): new image in case of hover
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving inside button
+    F.S.:
+        Button image changes into Hlimage
+        Button background changes into background
+    """
     if Hlimage != None:
         event.widget['image'] = Hlimage
     event.widget['background'] = background
     showHandle(event)
 def unhighlight(event, background, image):
+    """
+    Function to switch button into normal version in case of mouse leaving button area
+
+    Args:
+        event (event): action trigger, in this case it is always <Leave>, the leaving of cursor from the area of the button
+        background (_Color): new background in case of leaving
+        Hlimage (imageTK): new image in case of leaving
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving outside button
+    F.S.:
+        Button image changes into image
+        Button background changes into background
+    """
     if image != None:
         event.widget['image'] = image
     event.widget['background'] = background
@@ -491,12 +768,65 @@ handle_location = bgcanvas.create_image(0,0,anchor=NW,image=handleMark)
 
 #Custom Buttons
 def highlightbtn(event, item, Hlimage, disable):
+    """
+    Function to switch an image button into highlight background and image in case of mouse entering button area
+
+    Args:
+        event (event): action trigger, in this case it is always <Enter>, the hovering of cursor in the area of the button
+        item (variable): image button name identifier
+        Hlimage (imageTK): new image in case of hover
+        disable (boolean): passed condition to disable button in certain conditions
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving inside button
+    F.S.:
+        Button image changes into Hlimage if disable condition is not true
+    """
     if not disable:
         bgcanvas.itemconfig(item, image=Hlimage)
 def unhighlightbtn(event, item, image, disable):
+    """
+    Function to switch an image button into normal version in case of mouse leaving button area
+
+    Args:
+        event (event): action trigger, in this case it is always <Leave>, the leaving of cursor from the area of the button
+        item (variable): image button name identifier
+        Hlimage (imageTK): new image in case of leaving
+        disable (boolean): passed condition to disable button in certain conditions
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving outside button
+    F.S.:
+        Button image changes into image if disable condition is not true
+    """
     if not disable:
         bgcanvas.itemconfig(item, image=image)
 def buttonclick(event, item, disable, action):
+    """
+    Function to execute a command in case of a button click
+
+    Args:
+        event (event): action trigger, in this case it is always <Leave>, the leaving of cursor from the area of the button
+        item (variable): image button name identifier
+        action (function): function to be executed in a buttonclick
+        disable (boolean): passed condition to disable button in certain conditions
+
+    Returns:
+        None
+
+    I.S.:
+        Button clicked
+    F.S.:
+        Button clicked animation played and action executed if disable condition is not true
+    """
     if not disable:
         bgcanvas.move(item, -5, 5)
         windowrt.update()
@@ -514,11 +844,39 @@ bgcanvas.tag_bind(file_button, '<ButtonPress-1>', lambda event: buttonclick(even
 
 #Hide taskbar
 def showHandle(event):
+    """
+    Function to show title bar in full screen mode
+
+    Args:
+        event (event): action trigger, in this case it is always <Enter>, the entering of cursor from the area of title bar
+
+    Returns:
+        None
+
+    I.S.:
+        Title bar hidden
+    F.S.:
+        Title bar shown
+    """
     handle.place(y=0)
     minimize_button.place(y=0)
     full_button.place(y=0)
     close_button.place(y=0)
 def hideHandle(event):
+    """
+    Function to hide title bar in full screen mode
+
+    Args:
+        event (event): action trigger, in this case it is always <Leave>, the leaving of cursor from the area of title bar
+
+    Returns:
+        None
+
+    I.S.:
+        Title bar shown
+    F.S.:
+        Title bar hidden
+    """
     global Fullscreen
     if Fullscreen == True:
         handle.place(y=-30)
@@ -531,11 +889,22 @@ handle.bind('<Leave>', hideHandle)
 
 #buat credits
 creditsRolled = False
-def highlightCred(event):
-    bgcanvas.itemconfig(logo_credits, image=logoImgHl)
-def unhighlightCred(event):
-    bgcanvas.itemconfig(logo_credits, image=logoImg)
 def rollcred(event):
+    """
+    Function to show credits page if not shown or hide credits page if is shown
+
+    Args:
+        event (event): action trigger, in this case it is always <ButtonPress1>, left mouse button inside a button
+
+    Returns:
+        None
+
+    I.S.:
+        Hidden button clicked
+    F.S.:
+        Credits page shown if currently hidden
+        Credits page hidden if currently shown
+    """
     bgcanvas.move(logo_credits, -2, 2)
     windowrt.update()
     sleep(0.01)
@@ -647,14 +1016,31 @@ def rollcred(event):
 
         bgcanvas.tag_raise(logo_credits)
 
-bgcanvas.tag_bind(logo_credits, '<Enter>', highlightCred)
-bgcanvas.tag_bind(logo_credits, '<Leave>', unhighlightCred)
+lambda event: highlightbtn(event=event, item = set_button, Hlimage = buttonImageHl, disable=0)
+
+bgcanvas.tag_bind(logo_credits, '<Enter>', lambda event: highlightbtn(event=event, item = logo_credits, Hlimage = logoImgHl, disable=0))
+bgcanvas.tag_bind(logo_credits, '<Leave>', lambda event: unhighlightbtn(event=event, item = logo_credits, image = logoImg, disable=0))
 bgcanvas.tag_bind(logo_credits, '<ButtonPress-1>', rollcred)
 
 #Bonus Video feed
 videofeed = "none"
 videostart = False
-def startVideo():    
+def startVideo():
+    """
+    Function to start video feed
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    I.S.:
+        Camera button clicked when camera feed is off
+        Not currently loading dataset
+    F.S.:
+        Videofeed started
+    """
     try:
         global Imagedir
         global Folderdir
@@ -740,6 +1126,21 @@ def startVideo():
     bgcanvas.itemconfig(capture_image_label, text="")
 
 def stopVideo():
+    """
+    Function to stop video feed
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    I.S.:
+        Camera button clicked when camera feed is on
+        Not currently loading dataset
+    F.S.:
+        Videofeed stopped
+    """
     global videostart
     global testImg
     global resultImg
@@ -759,18 +1160,64 @@ def stopVideo():
     bgcanvas.itemconfig(capture_image_label, text="")
 
 def highlightCam(event):
+    """
+    Function to switch the camera button into highlight mode
+
+    Args:
+        event (event): action trigger, in this case it is always <Enter>, the hovering of cursor in the area of the button
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving inside button
+    F.S.:
+        Button image changes into Hlimage
+    """
     global videostart
     if videostart:
         bgcanvas.itemconfig(camera_button, image=cameraCloseHl)
     else:
         bgcanvas.itemconfig(camera_button, image=cameraHl)
 def unhighlightCam(event):
+    """
+    Function to switch the camera button into normal mode
+
+    Args:
+        event (event): action trigger, in this case it is always <Leave>, the leaving of cursor from the area of the button
+
+    Returns:
+        None
+
+    I.S.:
+        Button in idle
+        Mouse moving outside button
+    F.S.:
+        Button image changes into normal image
+    """
     global videostart
     if videostart:
         bgcanvas.itemconfig(camera_button, image=cameraClose)
     else:
         bgcanvas.itemconfig(camera_button, image=camera)
 def cameraPress(event):
+    """
+    Function to integrate camera button into camera functions
+
+    Args:
+        event (event): action trigger, in this case it is always <ButtonPress1>, left mouse button inside a button
+
+    Returns:
+        None
+
+    I.S.:
+        Camera button clicked
+    F.S.:
+        Button animation played
+        startVideo called if currently not showing feed
+        stopVideo called if currently showing feed
+    """
     bgcanvas.move(camera_button, -2, 2)
     windowrt.update()
     sleep(0.01)
@@ -787,6 +1234,24 @@ bgcanvas.tag_bind(camera_button, '<ButtonPress-1>', cameraPress)
 #splash screen
 images = []
 def editalpha(x1, y1, x2, y2, **kwargs):
+    """
+    Function to add a white rectangle overlay with a certain alpha
+
+    Args:
+        x1 (int): rectangle start x
+        y1 (int): rectangle start y
+        x2 (int): rectangle end x
+        y2 (int): rectangle end y
+        **kwargs (parameter): additional parameters, used to determine alpha
+
+    Returns:
+        img (_CanvasItemId): canvas item parameter for the white rectangle overlay
+
+    I.S.:
+        Any
+    F.S.:
+        White rectangle overlay with a certain alpha added on top over main window
+    """
     if 'alpha' in kwargs:
         alpha = int(kwargs.pop('alpha') * 255)
         fill = kwargs.pop('fill')
@@ -797,6 +1262,20 @@ def editalpha(x1, y1, x2, y2, **kwargs):
     return img
 
 def opening():
+    """
+    Function to play opening animation when opening the program
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    I.S.:
+        Program started
+    F.S.:
+        Opening animation played
+    """
     global Fullscreen
     Fullscreen = True
 
@@ -848,6 +1327,20 @@ def opening():
 
 #closing screen
 def closing():
+    """
+    Function to play closing animation when closing the program
+
+    Args:
+        None
+
+    Returns:
+        None
+
+    I.S.:
+        Program running
+    F.S.:
+        Closing animation played
+    """
     global Fullscreen
 
     if Fullscreen == False:

@@ -69,6 +69,7 @@ def setClick():
         bgcanvas.itemconfig(set_label, text="No Folder Chosen") 
         bgcanvas.itemconfig(output_label, text="None")
         bgcanvas.itemconfig(timer_label, text="0:00:00")
+        bgcanvas.itemconfig(distance_label, text=0)
         Folderdir = folder_path
 
         meanFace = ""
@@ -100,6 +101,7 @@ def fileClick():
             bgcanvas.itemconfig(output_label, text="None")
             bgcanvas.itemconfig(result_image, image=resultImg)
             bgcanvas.itemconfig(timer_label, text="0:00:00")
+            bgcanvas.itemconfig(distance_label, text=0)
         else:
             secondaryThread = Thread(target=lambda: executeSplit(0))
             timerThread = Thread(target= lambda: timeCount(1))
@@ -114,6 +116,7 @@ def fileClick():
         bgcanvas.itemconfig(test_image, image=testImg)
         bgcanvas.itemconfig(output_label, text="None")
         bgcanvas.itemconfig(timer_label, text="0:00:00")
+        bgcanvas.itemconfig(distance_label, text=0)
         Imagedir = image_path
     return
 
@@ -160,9 +163,9 @@ def executeSplit(feed):
     global siderunning
     siderunning = True
     if not videostart:
-        resultArray, filename = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 1)
+        resultArray, filename, dst = algo.solveImage(Imagedir, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 1)
     else:
-        resultArray, filename = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 2)
+        resultArray, filename, dst = algo.solveImage(feed, meanFace, array_of_eigenfaces, listOfCombination, listOfFixedMatrixFace, Folderdir, k, 2)
 
     resultArray = asarray(resultArray)
     resultFace = Image.fromarray(resultArray).resize((viewFinderRes,viewFinderRes))
@@ -170,6 +173,7 @@ def executeSplit(feed):
 
     bgcanvas.itemconfig(result_image, image=resultImg)
     bgcanvas.itemconfig(output_label, text=filename)
+    bgcanvas.itemconfig(distance_label, text=dst)
 
     siderunning = False
 
@@ -325,6 +329,9 @@ def fullwinswitch(widthval, heightval):
     bgcanvas.coords(timer_title, 100+newdst3, 190+newdst2+viewFinderRes)
     bgcanvas.coords(timer_label, 230+newdst3, 191+newdst2+viewFinderRes)
 
+    bgcanvas.coords(distance_title, 100+newdst3, 220+newdst2+viewFinderRes)
+    bgcanvas.coords(distance_label, 230+newdst3, 221+newdst2+viewFinderRes)
+
     bgcanvas.coords(logo_credits, widthval-80, heightval-80)
     bgcanvas.coords(camera_button, 285, 240+newdst1)
 
@@ -472,6 +479,9 @@ timer_label_load = bgcanvas.create_text(530, 551, anchor = W, text="0:00:00", fo
 
 timer_title = bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
 timer_label = bgcanvas.create_text(530, 581, anchor = W, text="0:00:00", font=(FontType, 15), fill="#01FA01")
+
+distance_title = bgcanvas.create_text(400, 610, anchor = W, text="Euclidean Dst   :", font=(FontType, 14))
+distance_label = bgcanvas.create_text(530, 611, anchor = W, text="0", font=(FontType, 15), fill="#01FA01")
 
 #logo credits
 logo_credits = bgcanvas.create_image(1200,640,anchor=NW,image=logoImg)

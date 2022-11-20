@@ -17,4 +17,4 @@ def shortestDst(vektor, matriksVektor):
         if sum < cachemin:
             cachemin = sum
             idx = i
-    return idx
+    return idx, cachemin

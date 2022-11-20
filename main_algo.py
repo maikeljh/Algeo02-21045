@@ -171,9 +171,9 @@ def solveImage(test_image, meanFace, array_of_eigenfaces, listOfCombination, lis
 
     # Step 9
     # Calculating the minimum euclidean distance of test image with training images and getting the index of the closest image
-    minim = shortestDst(combination_test_image, listOfCombination)
+    minim, dst = shortestDst(combination_test_image, listOfCombination)
     
     # Step 10
     filename = os.listdir(dataset)[minim]
     result = listOfFixMatrixFace[minim]
-    return result, filename
+    return result, filename, dst

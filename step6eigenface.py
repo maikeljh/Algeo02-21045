@@ -1,7 +1,5 @@
 # After we get our eigenvectors, we find the eigenface
-from eigenface import *
-from eigenvalue import get_k_eigenvalue_with_accum_q
-from eigenvector import get_k_eigenvector
+import numpy as np
 
 def EigenFaces(eigen_vectors, k, difference):
     listOfEigenFace = []

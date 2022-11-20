@@ -4,7 +4,7 @@ import numpy as np
 
 SENSITIVITY = 1
 THRESHOLD = 0.95
-ITERATION = 40
+ITERATION = 10
 
 def compute_eigenvalue(matrix):
     hessenberg_matrix = hessenberg_form(matrix)
@@ -52,7 +52,6 @@ def matrix_schur_form(matrix):
     hessenberg_matrix = hessenberg_form(matrix)
     schur_form = qr_iteration(hessenberg_matrix, ITERATION)
 
-    
     return schur_form
 
 def diagonal_mean_absolute(matrix):
@@ -92,23 +91,4 @@ def compute_eigenvalue_with_accum_q(matrix):
     hessenberg_matrix = hessenberg_form(matrix)
     schur_form, q = qr_iteration_with_accum_q(hessenberg_matrix, ITERATION)
 
-
-    
     return schur_form.diagonal(), q
-
-# def get_k_eigenvalue_with_accum_q(matrix):
-#     n = len(array)
-#     array_sum = np.sum(array)
-#     sorted_array = np.sort(array)[::-1]
-#     i = 0
-#     accumulative_sum = 0
-#     accumulative_array = []
-#     while (accumulative_sum/array_sum <= THRESHOLD):
-#         accumulative_sum += sorted_array[i]
-#         accumulative_array = np.append(accumulative_array, sorted_array[i])
-#         i += 1
-#     k = i
-#     return i, accumulative_array
-
-
-

@@ -1,7 +1,5 @@
 import os
-import matplotlib.pyplot as plt
 import numpy as np
-import time
 from eigenvalue import compute_eigenvalue_with_accum_q
 from eigenvector import get_k_eigenvector
 from step6eigenface import *
@@ -10,12 +8,11 @@ from euclideandst import shortestDst
 from extract import imageToMatrix as ITM
 import eigenface as EF
 
-
 # Main Algorithm
 def main_algo(dataset, test_image):
     # Step 1
     # Getting list of matrix faces
-    listOfMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
+    listOfMatrixFace, listOfFixMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
 
     # Step 2
     # Defining mean face from list of matrix faces
@@ -38,13 +35,9 @@ def main_algo(dataset, test_image):
 
     # Compute k Eigen vectors
     k, arr = get_k_eigenvector(result, q)
-
     # Step 6
     # Calculate Eigenfaces from Eigen vectors
     array_of_eigenfaces = EigenFaces(arr,int(k), difference)
-
-    # Setting up augmented matrix for getting linear combinations of training face
-    combination_eigenfaces = np.transpose(array_of_eigenfaces)
 
     # Step 7
     # Compute list of linear combinations of training faces
@@ -53,7 +46,7 @@ def main_algo(dataset, test_image):
     # Step 8
     # Process Test Image to get the combination linear of test image
     testImage = cb.processTestImage(test_image)
-
+    
     # Calculating the difference of test image with mean face
     differenceTestImage = cb.differenceTestImage(testImage, meanFace)
 
@@ -63,18 +56,18 @@ def main_algo(dataset, test_image):
     # Step 9
     # Calculating the minimum euclidean distance of test image with training images and getting the index of the closest image
     minim = shortestDst(combination_test_image, listOfCombination)
-    
+
     # Step 10
     filename = os.listdir(dataset)[minim]
     outputarray = ITM.reshapeImage(listOfMatrixFace[minim])
-    return outputarray, filename
 
+    return outputarray, filename
 
 # Main Algorithm
 def camera_algo(dataset, feed):
     # Step 1
     # Getting list of matrix faces
-    listOfMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
+    listOfMatrixFace, listOfFixMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
 
     # Step 2
     # Defining mean face from list of matrix faces
@@ -101,9 +94,6 @@ def camera_algo(dataset, feed):
     # Step 6
     # Calculate Eigenfaces from Eigen vectors
     array_of_eigenfaces = EigenFaces(arr,int(k), difference)
-
-    # Setting up augmented matrix for getting linear combinations of training face
-    combination_eigenfaces = np.transpose(array_of_eigenfaces)
 
     # Step 7
     # Compute list of linear combinations of training faces
@@ -125,15 +115,15 @@ def camera_algo(dataset, feed):
     
     # Step 10
     filename = os.listdir(dataset)[minim]
-    outputarray = ITM.reshapeImage(listOfMatrixFace[minim])
-    return outputarray, filename
+    result = listOfFixMatrixFace[minim]
+    return result, filename
 
 
 #Split algorithm
 def Load_Dataset(dataset):
         # Step 1
     # Getting list of matrix faces
-    listOfMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
+    listOfMatrixFace, listOfFixMatrixFace = ITM.FolderImageToListOfMatrix(dataset)
 
     # Step 2
     # Defining mean face from list of matrix faces
@@ -161,16 +151,13 @@ def Load_Dataset(dataset):
     # Calculate Eigenfaces from Eigen vectors
     array_of_eigenfaces = EigenFaces(arr,int(k), difference)
 
-    # Setting up augmented matrix for getting linear combinations of training face
-    combination_eigenfaces = np.transpose(array_of_eigenfaces)
-
     # Step 7
     # Compute list of linear combinations of training faces
     listOfCombination = cb.solveCombinationLinear(difference, array_of_eigenfaces, k)
 
-    return meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, k
+    return meanFace, array_of_eigenfaces, listOfCombination, listOfFixMatrixFace, k
 
-def solveImage(test_image, meanFace, array_of_eigenfaces, listOfCombination, listOfMatrixFace, dataset, k, type):
+def solveImage(test_image, meanFace, array_of_eigenfaces, listOfCombination, listOfFixMatrixFace, dataset, k, type):
     # Calculating the difference of test image with mean face
     if type == 1:
         testImage = cb.processTestImage(test_image)
@@ -188,6 +175,5 @@ def solveImage(test_image, meanFace, array_of_eigenfaces, listOfCombination, lis
     
     # Step 10
     filename = os.listdir(dataset)[minim]
-    outputarray = ITM.reshapeImage(listOfMatrixFace[minim])
-    return outputarray, filename
-
+    result = listOfFixMatrixFace[minim]
+    return result, filename

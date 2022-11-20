@@ -35,6 +35,3 @@ def reshapeImage(face):
         shape.append(row)
 
     return shape
-
-# Make list of matrix faces from dataset
-listOfMatrixFace = FolderImageToListOfMatrix("dataset")

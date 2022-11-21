@@ -18,7 +18,7 @@ def FolderImageToListOfMatrix(folder):
     listOfFixMatrixFace = []
     
     for filename in os.listdir(folder):
-        # Each image is processed, compressed to 256x256, and flatten to 256^2 x 1
+        # Each image is processed, compressed to 256x256, and flatten to 1 x 256^2
         image = cv2.imread(os.path.join(folder,filename))
         image = cv2.resize(image,(256,256), interpolation = cv2.INTER_AREA)
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

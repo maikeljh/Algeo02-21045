@@ -14,7 +14,6 @@ def main():
 
     result, q = compute_eigenvalue_with_accum_q(matrix)
 
-    k_array = get
     np.set_printoptions(precision=3)
     print(result)
     print(q)

@@ -1,4 +1,4 @@
-from eigenvalue import compute_eigenvalue, get_k_eigenvalue_with_accum_q
+from eigenvalue import get_k_eigenvalue_with_accum_q
 import numpy as np
 
 def get_k_eigenvector(arr_eigenvalue, arr_eigenvector):

@@ -2,6 +2,14 @@ import numpy as np
 from givens import *
 
 def qr_decomposition(matrix):
+    """Do QR decomposition to input square matrix
+
+    Args:
+        matrix (matrix): square matrix
+
+    Returns:
+        Tuple of matrix: Matrix Q and R, the result of decomposition of A 
+    """
     size_matrix = len(matrix)
     q_transposed = np.identity(size_matrix)
 
@@ -22,13 +30,16 @@ def qr_decomposition(matrix):
     q = np.transpose(q_transposed)
     return (q, matrix)
 
-def qr_iteration(matrix, n):
-    for i in range(1, n+1):
-        q, r = qr_decomposition(matrix)
-        matrix = np.matmul(r, q)
-    return matrix
+def qr_iteration_with_accum_q(matrix, n: int):
+    """Do QR iteration n times
 
-def qr_iteration_with_accum_q(matrix, n):
+    Args:
+        matrix (matrix): square matrix
+        n (int): number of iteration
+
+    Returns:
+        tuple of matrix: Result of iteration n times, and eigenvector matrix
+    """
     accum_q = np.identity(len(matrix))
     for i in range(1, n+1):
         q, r = qr_decomposition(matrix)

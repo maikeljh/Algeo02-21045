@@ -10,6 +10,18 @@ from threading import Thread
 import cv2
 import main_algo as algo
 
+print("Pilih tema\n1. Onodera\n2. Itb")
+x = input()
+while x != '1' and x != '2':
+    print("Input tidak valid!")
+    print("Pilih tema\n1. Onodera\n2. Itb")
+    x = input()
+
+if x == '1':
+    Theme = "guiOnodera/"
+elif x == '2':
+    Theme = "guiItb/"
+
 #globar var
 FontType = "Calibri Light"
 Folderdir = ""
@@ -80,7 +92,7 @@ def setClick():
             tertiaryThread = Thread(target=lambda: segmenter())
             tertiaryThread.start()
     else:
-        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(set_label, text="No Folder Chosen") 
         bgcanvas.itemconfig(output_label, text="None")
@@ -128,7 +140,7 @@ def fileClick():
         bgcanvas.itemconfig(test_image, image=testImg)
         Imagedir = image_path
         if Folderdir == "":
-            resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+            resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
             bgcanvas.itemconfig(output_label, text="None")
             bgcanvas.itemconfig(result_image, image=resultImg)
             bgcanvas.itemconfig(timer_label, text="0:00:00")
@@ -139,9 +151,9 @@ def fileClick():
             secondaryThread.start()
             timerThread.start()
     else:
-        testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        testImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(file_label, text="No File Chosen")
-        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         
         bgcanvas.itemconfig(result_image, image=resultImg)
         bgcanvas.itemconfig(test_image, image=testImg)
@@ -331,25 +343,25 @@ def onRootDeiconify(event):
 overlay.bind("<Map>", onRootDeiconify)
 
 #assets
-bgImage = ImageTk.PhotoImage(Image.open("gui/bg.png").resize((1280,720)))
-buttonImage = PhotoImage(file='gui/buttonshl.png',width=80,height=30)
-buttonImageHl = PhotoImage(file='gui/buttons.png',width=80,height=30)
-buttonImageOff = PhotoImage(file='gui/buttonsoff.png',width=80,height=30)
-minimImage = PhotoImage(file='gui/customminimize.png',width=20,height=20)
-closeImage = PhotoImage(file='gui/customclose.png',width=20,height=20)
-closeImageHl = PhotoImage(file='gui/customclosehl.png',width=20,height=20)
-fullImage = PhotoImage(file='gui/customfull.png',width=20,height=20)
-winImage = PhotoImage(file='gui/customwindow.png',width=20,height=20)
-nullImg = PhotoImage(file='gui/nullImg.png',width=1,height=1)
-noImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-logoImg = ImageTk.PhotoImage(Image.open("gui/icon.ico").resize((50,50)))
-logoImgHl = ImageTk.PhotoImage(Image.open("gui/iconhl.ico").resize((50,50)))
-handleMark = ImageTk.PhotoImage(Image.open("gui/nullImg.png").resize((1280,30)))
-facespot = ImageTk.PhotoImage(Image.open("gui/facespot.png").resize((viewFinderRes,viewFinderRes)))
-camera = ImageTk.PhotoImage(Image.open("gui/camera.png").resize((30,30)))
-cameraHl = ImageTk.PhotoImage(Image.open("gui/camerahl.png").resize((30,30)))
-cameraClose = ImageTk.PhotoImage(Image.open("gui/cameraclose.png").resize((30,30)))
-cameraCloseHl = ImageTk.PhotoImage(Image.open("gui/cameraclosehl.png").resize((30,30)))
+bgImage = ImageTk.PhotoImage(Image.open(Theme+"bg.png").resize((1280,720)))
+buttonImage = PhotoImage(file=Theme+'buttonshl.png',width=80,height=30)
+buttonImageHl = PhotoImage(file=Theme+'buttons.png',width=80,height=30)
+buttonImageOff = PhotoImage(file=Theme+'buttonsoff.png',width=80,height=30)
+minimImage = PhotoImage(file=Theme+'customminimize.png',width=20,height=20)
+closeImage = PhotoImage(file=Theme+'customclose.png',width=20,height=20)
+closeImageHl = PhotoImage(file=Theme+'customclosehl.png',width=20,height=20)
+fullImage = PhotoImage(file=Theme+'customfull.png',width=20,height=20)
+winImage = PhotoImage(file=Theme+'customwindow.png',width=20,height=20)
+nullImg = PhotoImage(file=Theme+'nullImg.png',width=1,height=1)
+noImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+logoImg = ImageTk.PhotoImage(Image.open(Theme+"icon.ico").resize((50,50)))
+logoImgHl = ImageTk.PhotoImage(Image.open(Theme+"iconhl.ico").resize((50,50)))
+handleMark = ImageTk.PhotoImage(Image.open(Theme+"nullImg.png").resize((1280,30)))
+facespot = ImageTk.PhotoImage(Image.open(Theme+"facespot.png").resize((viewFinderRes,viewFinderRes)))
+camera = ImageTk.PhotoImage(Image.open(Theme+"camera.png").resize((30,30)))
+cameraHl = ImageTk.PhotoImage(Image.open(Theme+"camerahl.png").resize((30,30)))
+cameraClose = ImageTk.PhotoImage(Image.open(Theme+"cameraclose.png").resize((30,30)))
+cameraCloseHl = ImageTk.PhotoImage(Image.open(Theme+"cameraclosehl.png").resize((30,30)))
 
 testImg = noImg
 resultImg = noImg
@@ -493,7 +505,7 @@ def fullwinswitch(widthval, heightval):
         
         
     global bgImage
-    bgImage = ImageTk.PhotoImage(Image.open("gui/bg.png").resize((widthval,heightval)))
+    bgImage = ImageTk.PhotoImage(Image.open(Theme+"bg.png").resize((widthval,heightval)))
     bgcanvas.itemconfig(background,image=bgImage)
 
     newdst1 = heightval*60//720
@@ -543,7 +555,7 @@ def fullwinswitch(widthval, heightval):
     bgcanvas.coords(camera_button, 285, 240+newdst1)
 
     global handleMark
-    handleMark = ImageTk.PhotoImage(Image.open("gui/nullImg.png").resize((widthval,30)))
+    handleMark = ImageTk.PhotoImage(Image.open(Theme+"nullImg.png").resize((widthval,30)))
     bgcanvas.itemconfig(handle_location, image=handleMark)
 
     global creditsRolled
@@ -564,7 +576,7 @@ def fullwinswitch(widthval, heightval):
             fontsz1 = 48*heightval//720
             fontsz2 = 28*heightval//720
             
-        bushImage = ImageTk.PhotoImage(Image.open("gui/bushalt.png"))
+        bushImage = ImageTk.PhotoImage(Image.open(Theme+"bushalt.png"))
         bgcanvas.itemconfig(bush_bg, image = bushImage)
         bgcanvas.coords(bush_bg, -475, -600)
 
@@ -577,7 +589,7 @@ def fullwinswitch(widthval, heightval):
         bgcanvas.itemconfig(text3, font=("Kristen ITC", fontsz2))
         bgcanvas.itemconfig(text4, font=("Kristen ITC", fontsz2))
 
-        mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png").resize((widthval*428//1280, heightval*1218//720)))
+        mascotImage = ImageTk.PhotoImage(Image.open(Theme+"mascot.png").resize((widthval*428//1280, heightval*1218//720)))
         bgcanvas.coords(mascot_img, widthval-(29*(widthval*10//1280)), 100)
         bgcanvas.itemconfig(mascot_img, image=mascotImage)
 
@@ -586,11 +598,11 @@ def fullwinswitch(widthval, heightval):
         resultImg = ImageTk.PhotoImage(image=resultFace)
         bgcanvas.itemconfig(result_image, image=resultImg)
     else:
-        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(result_image, image=resultImg)
 
     if Imagedir == "":
-        testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        testImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(test_image, image=testImg)
     else:
         testImg = ImageTk.PhotoImage(Image.open(Imagedir).resize((viewFinderRes,viewFinderRes)))
@@ -918,8 +930,8 @@ def rollcred(event):
     if not creditsRolled:
         creditsRolled = True
         if not Fullscreen:
-            bushImage = ImageTk.PhotoImage(Image.open("gui/bushalt.png").resize((2011,1000)))
-            mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png"))
+            bushImage = ImageTk.PhotoImage(Image.open(Theme+"bushalt.png").resize((2011,1000)))
+            mascotImage = ImageTk.PhotoImage(Image.open(Theme+"mascot.png"))
             bush_bg = bgcanvas.create_image(1280,-200, image=bushImage, anchor=NW)
             mascot_img = bgcanvas.create_image(1250,100, image=mascotImage, anchor=NW)
 
@@ -956,8 +968,8 @@ def rollcred(event):
                 fontsz1 = 48*heightval//720
                 fontsz2 = 28*heightval//720
 
-            bushImage = ImageTk.PhotoImage(Image.open("gui/bushalt.png"))
-            mascotImage = ImageTk.PhotoImage(Image.open("gui/mascot.png").resize((widthval*428//1280, heightval*1218//720)))
+            bushImage = ImageTk.PhotoImage(Image.open(Theme+"bushalt.png"))
+            mascotImage = ImageTk.PhotoImage(Image.open(Theme+"mascot.png").resize((widthval*428//1280, heightval*1218//720)))
             bush_bg = bgcanvas.create_image(1280,-600, image=bushImage, anchor=NW)
             mascot_img = bgcanvas.create_image(widthval-30, 100, image=mascotImage, anchor=NW)
 
@@ -1053,7 +1065,7 @@ def startVideo():
         videostart = True
         Imagedir = ""
 
-        resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+        resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
         bgcanvas.itemconfig(result_image, image=resultImg)
         
         videoCap = cv2.VideoCapture(0)
@@ -1073,7 +1085,7 @@ def startVideo():
         bgcanvas.itemconfig(file_label, text="Camera Feed")
         bgcanvas.itemconfig(file_button, image=buttonImageOff)
         bgcanvas.itemconfig(camera_button, image=cameraClose)
-        facespot = ImageTk.PhotoImage(Image.open("gui/facespot.png").resize((viewFinderRes,viewFinderRes)))
+        facespot = ImageTk.PhotoImage(Image.open(Theme+"facespot.png").resize((viewFinderRes,viewFinderRes)))
 
         cachedTime = time()
         captured = False
@@ -1142,8 +1154,8 @@ def stopVideo():
     global resultImg
     videostart = False
     bgcanvas.itemconfig(file_label, text="No File Chosen")
-    testImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
-    resultImg = ImageTk.PhotoImage(Image.open("gui/noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+    testImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
+    resultImg = ImageTk.PhotoImage(Image.open(Theme+"noimage.jpg").resize((viewFinderRes,viewFinderRes)))
     bgcanvas.itemconfig(face_spot, image=nullImg)
 
     bgcanvas.itemconfig(output_label, text="None")
@@ -1275,8 +1287,8 @@ def opening():
     global Fullscreen
     Fullscreen = True
 
-    bushImage = ImageTk.PhotoImage(Image.open("gui/bush.png"))
-    logoImage = ImageTk.PhotoImage(Image.open("gui/icon.ico"))
+    bushImage = ImageTk.PhotoImage(Image.open(Theme+"bush.png"))
+    logoImage = ImageTk.PhotoImage(Image.open(Theme+"icon.ico"))
 
     alp = 1
     img = editalpha(0,0,1280,720,fill="white",alpha=alp)
@@ -1305,7 +1317,7 @@ def opening():
             bgcanvas.move(bush2, -40, 0)
             logodim -= 5
         
-        logoImage = ImageTk.PhotoImage(Image.open("gui/icon.ico").resize((logodim,logodim)).rotate(angle))
+        logoImage = ImageTk.PhotoImage(Image.open(Theme+"icon.ico").resize((logodim,logodim)).rotate(angle))
         logo = bgcanvas.create_image(640,360, image=logoImage)
         windowrt.update()
     bgcanvas.delete(bush1)

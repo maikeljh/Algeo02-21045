@@ -24,6 +24,7 @@ Contributors:
 
 ## Features
 - Tkinter based GUI
+- GUI available in two themes
 - GUI available in fullscreen and windowed
 - User-selected dataset
 - User-selected test image
@@ -42,15 +43,15 @@ Contributors:
 - Download and install Python (https://www.python.org/downloads/)
 - Download install dependencies from the terminal
     > 
-        -pip install numpy
+        pip install numpy
         
-        -pip install opencv-python
+        pip install opencv-python
 
-        -pip install matplotlib
+        pip install matplotlib
 
-        -pip install tkinter
+        pip install tk
 
-        -pip install pillow
+        pip install pillow
 - If program doesn't run as intended, try installing an older version of python (https://www.python.org/downloads/release/python-394/)<br><br>
 
 ## Usage
@@ -60,6 +61,11 @@ Contributors:
 - Run main.py file inside src<br><br>
 
 ## Screenshots
+### Itb Theme
+![image](https://user-images.githubusercontent.com/89117568/203087191-081e8b72-6cac-471f-b8b4-093a1402cc05.png)
+![image](https://user-images.githubusercontent.com/89117568/203087200-eeffb2b9-632a-4198-978a-8c2b028830f4.png)
+
+### Onodera Theme
 ![image](https://user-images.githubusercontent.com/89117568/203071370-067c55b2-42c7-416f-b4ab-0c9af56063af.png)
 ![image](https://user-images.githubusercontent.com/89117568/203071073-b66c724b-d509-46d4-ae41-6807b0b1c6ff.png)<br><br>
 

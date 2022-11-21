@@ -2,6 +2,15 @@ from eigenvalue import get_k_eigenvalue_with_accum_q
 import numpy as np
 
 def get_k_eigenvector(arr_eigenvalue, arr_eigenvector):
+    """Get k number of eigenvector
+
+    Args:
+        arr_eigenvalue (array): array of eigenvalue
+        arr_eigenvector (matrix): array of eigenvector
+
+    Returns:
+        tuple : number of k selected, array of eigenvector selected
+    """
     arr_eigenvector = np.transpose(arr_eigenvector)
     k, arr_index = get_k_eigenvalue_with_accum_q(arr_eigenvalue)
     n = len(arr_eigenvector[0])

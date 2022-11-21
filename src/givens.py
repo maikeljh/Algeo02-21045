@@ -23,7 +23,6 @@ def givens_template(m: int, n: int, k: int, c: float, s: float):
     
     return identity
 
-# TODO: Inget ganti-ganti ini
 def givens_csr_hessenberg(input_matrix, m: int, n: int):
     """calculate the appropriate c and s constant to make givens matrix
 
@@ -47,17 +46,17 @@ def givens_csr_hessenberg(input_matrix, m: int, n: int):
         c = 0
         s = np.sign(b)
     elif abs(a) > abs(b):
-        t = b / a
-        u = np.sign(a) * np.sqrt(1 + t * t)
-        c = 1 / u
-        s = c * t
+        d = b / a
+        p = np.sign(a) * np.sqrt(1 + d * d)
+        c = 1 / p
+        s = c * d
     else:
-        t = a / b
-        u = np.sign(b) * np.sqrt(1 + t * t)
-        s = 1 / u
-        c = s * t
+        d = a / b
+        p = np.sign(b) * np.sqrt(1 + d * d)
+        s = 1 / p
+        c = s * d
     return (c, s)
-# TODO: Inget ganti-ganti ini
+
 def givens_csr_qr(input_matrix, m: int, n: int):
     """Calculate the appropriate c and s constant to make givens matrix
 
@@ -81,15 +80,15 @@ def givens_csr_qr(input_matrix, m: int, n: int):
         c = 0
         s = np.sign(b)
     elif abs(a) > abs(b):
-        t = b / a
-        u = np.sign(a) * np.sqrt(1 + t * t)
-        c = 1 / u
-        s = c * t
+        d = b / a
+        p = np.sign(a) * np.sqrt(1 + d * d)
+        c = 1 / p
+        s = c * d
     else:
-        t = a / b
-        u = np.sign(b) * np.sqrt(1 + t * t)
-        s = 1 / u
-        c = s * t
+        d = a / b
+        p = np.sign(b) * np.sqrt(1 + d * d)
+        s = 1 / p
+        c = s * d
     return (c, s)
 
 def givens_m_n_hessenberg (matrix, m: int, n: int):

@@ -736,7 +736,7 @@ file_button = bgcanvas.create_image(100, 350, anchor=W, image=buttonImage)
 file_label = bgcanvas.create_text(200, 340, anchor = NW, text="No File Chosen", font=(FontType, 12),width=170)
 
 result_label = bgcanvas.create_text(100, 450, anchor = W, text="Result", font=(FontType, 18))
-output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#01DA01", width=240)
+output_label = bgcanvas.create_text(130, 490, anchor = W, text="None", font=(FontType, 18), fill="#361D26", width=240)
 #Main viewfinder
 test_image_label = bgcanvas.create_text(400, 150, anchor = W, text="Test Image", font=(FontType, 14))
 test_image = bgcanvas.create_image(400,160, anchor=NW, image=testImg)
@@ -748,13 +748,13 @@ result_image = bgcanvas.create_image(800,160, anchor=NW, image=testImg)
 capture_image_label = bgcanvas.create_text(400, 520, anchor = W, text="", font=(FontType, 14))
 #timer
 timer_title_load = bgcanvas.create_text(400, 550, anchor = W, text="Load Time         :", font=(FontType, 14))
-timer_label_load = bgcanvas.create_text(530, 551, anchor = W, text="0:00:00", font=(FontType, 15), fill="#01FA01")
+timer_label_load = bgcanvas.create_text(530, 551, anchor = W, text="0:00:00", font=(FontType, 15), fill="#361D26")
 
 timer_title = bgcanvas.create_text(400, 580, anchor = W, text="Execution Time:", font=(FontType, 14))
-timer_label = bgcanvas.create_text(530, 581, anchor = W, text="0:00:00", font=(FontType, 15), fill="#01FA01")
+timer_label = bgcanvas.create_text(530, 581, anchor = W, text="0:00:00", font=(FontType, 15), fill="#361D26")
 
 distance_title = bgcanvas.create_text(400, 610, anchor = W, text="Euclidean Dst   :", font=(FontType, 14))
-distance_label = bgcanvas.create_text(530, 611, anchor = W, text="0", font=(FontType, 15), fill="#01FA01")
+distance_label = bgcanvas.create_text(530, 611, anchor = W, text="0", font=(FontType, 15), fill="#361D26")
 
 #logo credits
 logo_credits = bgcanvas.create_image(1200,640,anchor=NW,image=logoImg)
